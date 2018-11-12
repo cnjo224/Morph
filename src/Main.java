@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Main extends JFrame {
+    public PopupSettings settings = new PopupSettings();
     private BufferedImage image;
 
     //initializer for the JFrame
@@ -41,7 +42,7 @@ public class Main extends JFrame {
         JMenuItem FileSettings = new JMenuItem("Settings");
         FileSettings.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                PopupSettings settings = new PopupSettings();
+                settings.setVisible(true);
                 settings.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent windowEvent) {
                         System.out.println("Settings Closed");
@@ -67,7 +68,7 @@ public class Main extends JFrame {
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Preview Page");
-                PreviewWindow OpenPreview = new PreviewWindow();
+                PreviewWindow OpenPreview = new PreviewWindow(settings);
             }
         });
 

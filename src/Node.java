@@ -1,3 +1,9 @@
+/* Authors: Caitlin Jones, Chelina Ortiz M
+ * Date: 11/16/18
+ * Project: CS 335 Program 3 - Morph
+ * References:
+ * Notes:
+ */
 public class Node {
     int x, y;
 
