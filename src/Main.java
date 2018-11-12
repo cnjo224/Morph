@@ -41,11 +41,11 @@ public class Main extends JFrame {
         JMenuItem FileSettings = new JMenuItem("Settings");
         FileSettings.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Change Settings");
                 PopupSettings settings = new PopupSettings();
                 settings.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent windowEvent) {
                         System.out.println("Settings Closed");
+                        //call member functions of settings page here
                     }
                 });
             }
