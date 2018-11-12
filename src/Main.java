@@ -63,10 +63,11 @@ public class Main extends JFrame {
         FileMenu.add(FileSettings);
         FileMenu.add(FileExit);
 
-        JMenuItem Morph = new JMenuItem("Morph");
-        Morph.addActionListener(new ActionListener() {
+        JMenuItem Preview = new JMenuItem("Preview");
+        Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Perform Morph");
+                System.out.println("Open Preview Page");
+                PreviewWindow OpenPreview = new PreviewWindow();
             }
         });
 
@@ -80,11 +81,9 @@ public class Main extends JFrame {
         JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
         menuBar.add(FileMenu);
-        menuBar.add(Morph);
+        menuBar.add(Preview);
         menuBar.add(Reset);
     }//end createMenus function
-
-
 
 
     public static void main(String[] args){
