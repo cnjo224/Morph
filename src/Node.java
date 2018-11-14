@@ -7,26 +7,31 @@ import java.awt.*;
  * Notes:
  */
 public class Node {
-    private int x, y, pictureWidth,
+    private int x, y, imgX, imgY, cols, rows, pictureWidth,
             xCoord[] = new int[4],
             yCoord[] = new int[4],
             size = 4;
     private Polygon node;
 
-    public Node(int X, int Y) { //}, int PictureWidth){
-        x = X;
+    public Node(int X, int Y, int PictureWidth, int Cols, int Rows){
+        x = X; // Position in the array
         y = Y;
-        //pictureWidth = PictureWidth;
+        pictureWidth = PictureWidth;
+        cols = Cols;
+        rows = Rows;
 
-        xCoord[0] = x - size;
-        xCoord[1] = x + size;
-        xCoord[2] = x + size;
-        xCoord[3] = x - size;
+        imgX = x * Math.floorDiv(pictureWidth,cols); // Position in the pane/picture
+        imgY = y * Math.floorDiv(pictureWidth,rows);
 
-        yCoord[0] = y - size;
-        yCoord[1] = y - size;
-        yCoord[2] = y + size;
-        yCoord[3] = y + size;
+        xCoord[0] = imgX - size;
+        xCoord[1] = imgX + size;
+        xCoord[2] = imgX + size;
+        xCoord[3] = imgX - size;
+
+        yCoord[0] = imgY - size;
+        yCoord[1] = imgY - size;
+        yCoord[2] = imgY + size;
+        yCoord[3] = imgY + size;
 
         node = new Polygon(xCoord, yCoord, size);
     }
@@ -34,8 +39,18 @@ public class Node {
     public int getX(){return x;}
     public int getY(){return y;}
 
-    public void setX(int X){x = X;}
-    public void setY(int Y){y= Y;}
+    public int getImgX(){ return imgX; }
+    public int getImgY() { return imgY; }
+
+    public void setX(int X){
+        x = X;
+        imgX = x * Math.floorDiv(pictureWidth,cols);
+    }
+
+    public void setY(int Y){
+        y= Y;
+        imgY = Y * Math.floorDiv(pictureWidth,rows);
+    }
 
     public void drawNode(Graphics g) {
         g.setColor(Color.BLACK);

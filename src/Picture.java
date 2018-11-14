@@ -1,5 +1,12 @@
+
+// TODO: Account for images being bigger/smaller pictures (size in pixels)
+// TODO: Make the points draggable
+// TODO: Morph class and algorithms
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class Picture extends JPanel {
@@ -12,37 +19,95 @@ public class Picture extends JPanel {
         this.rows = rows;
         this.cols = cols;
         points = new Node[rows][cols];
+        setPreferredSize(new Dimension(600, 600));
 
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
-                if (i != 0 || i != cols || j != 0 || j != rows) {
-                    points[i][j] = new Node(i, j);
-                    points[i][j].setX(i);
-                    points[i][j].setY(j);
-                }
+                //if (i > 0 || i <= cols || j > 0 || j <= rows) {
+                    points[i][j] = new Node(i, j, 600, cols, rows);
+                //}
             }
         }
     }
 
     public void drawLines(Graphics g) {
         int x, y;
+        // Declare triangles within this lines
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
-                x = points[i][j].getX();
-                y = points[i][j].getY();
+                x = points[i][j].getImgX();
+                y = points[i][j].getImgY();
 
                 if (i < cols-1) { // lines to the right
-                    g.drawLine(x, y, x+1, y);
+                    int xR = points[i+1][j].getImgX();
+                    int yR = points[i+1][j].getImgY();
+                    g.drawLine(x, y, xR, yR);
                 }
                 if (j < rows-1) { // lines going down
-                    g.drawLine(x, y, x, y+1);
+                    int xD = points[i][j+1].getImgX();
+                    int yD = points[i][j+1].getImgY();
+                    g.drawLine(x, y, xD, yD);
                 }
-                if (i != 0 && i < cols-1 && j != 0 && j < rows-1) { // Diagonals
-                    g.drawLine(x, y, x+1, y+1);
+                if (i < cols-1 && j < rows-1) { // Diagonals
+                    int xDiag = points[i+1][j+1].getImgX();
+                    int yDiag = points[i+1][j+1].getImgY();
+                    g.drawLine(x, y, xDiag, yDiag);
                 }
+
+                
             }
         }
     }
+
+    // Starter code
+    /*public static void warpTriangle (BufferedImage src, BufferedImage dest, Triangle S, Triangle D,
+                                     Object ALIASING, Object INTERPOLATION) {
+        if (ALIASING == null)
+            ALIASING = RenderingHints.VALUE_ANTIALIAS_ON;
+        if (INTERPOLATION == null)
+            INTERPOLATION = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+        double[][] a = new double[3][3];
+        for (int i = 0; i < 3; i++) {
+            a[i][0] = S.getX(i);
+            a[i][1] = S.getY(i);
+            a[i][2] = 1.0;
+        }
+        int l[] = new int[3];
+        Gauss(3,a,l);
+
+        double[] b = new double[3];
+        for(int i = 0; i < 3; i++) {
+            b[i] = D.getX(i);
+        }
+
+        double[] x = new double[3];
+        solve(3, a, l, b, x);
+
+        double[] by = new double[3];
+        for (int i = 0; i  < 3; i++) {
+            by[i] = D.getY(i);
+        }
+
+        double[] y = new double[3];
+        solve(3, a, l, by, y);
+
+        AffineTransform af = new AffineTransform(x[0], y[0], x[1], y[1], x[2], y[2]);
+
+        GeneralPath destPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
+
+        destPath.moveTo((float)D.getX(0), (float)D.getY(0));
+        destPath.lineTo((float)D.getX(1), (float)D.getY(1));
+        destPath.lineTo((float)D.getX(2), (float)D.getY(2));
+        destPath.lineTo((float)D.getX(0), (float)D.getY(0));
+        Graphics2D g2 = dest.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, ALIASING);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,INTERPOLATION);
+        g2.clip(destPath);
+        g2.setTransform(af);
+        g2.drawImage(src, 0, 0, null);
+        g2.dispose();
+    }
+    */
 
     public void paintComponent(Graphics g) {
         g.setColor(Color.BLACK);
@@ -51,7 +116,9 @@ public class Picture extends JPanel {
         g2d.drawImage(bim, 0, 0, this);
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
-                points[i][j].drawNode(g);
+                //if (i > 0 || i <= cols || j > 0 || j <= rows) {
+                    points[i][j].drawNode(g);
+                //}
             }
         }
         drawLines(g);

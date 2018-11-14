@@ -17,7 +17,7 @@ import java.io.*;
 public class Main extends JFrame {
     public PopupSettings settings = new PopupSettings();
     private BufferedImage image;
-    private Picture imgView;
+    private Picture imgView, endView;
     private int rows = 10, columns = 10;
     private Container c = getContentPane();
 
@@ -28,9 +28,11 @@ public class Main extends JFrame {
 
         imgView = new Picture(readImage("res/boat.gif"), rows, columns);
         //imgView = new Picture(image, rows, columns);
+        endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
         c.add(imgView);
+        c.add(endView);
 
-        setSize(600,600);
+        setSize(1200,600);
         setVisible(true);
     }
 
