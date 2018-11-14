@@ -8,6 +8,8 @@
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.Image;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -15,11 +17,41 @@ import java.io.*;
 public class Main extends JFrame {
     public PopupSettings settings = new PopupSettings();
     private BufferedImage image;
+    private Picture imgView;
+    private int rows = 10, columns = 10;
+    private Container c = getContentPane();
 
     //initializer for the JFrame
     public Main(){
         super("Morph");
         this.createMenus();
+
+        imgView = new Picture(readImage("res/boat.gif"), rows, columns);
+        //imgView = new Picture(image, rows, columns);
+        c.add(imgView);
+
+        setSize(600,600);
+        setVisible(true);
+    }
+
+    // This method reads an Picture object from a file indicated by
+    // the string provided as the parameter.  The image is converted
+    // here to a BufferedImage object, and that new object is the returned
+    // value of this method.
+    // The mediatracker in this method can throw an exception
+
+    private BufferedImage readImage (String file) {
+        Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource(file));
+        MediaTracker tracker = new MediaTracker (new Component () {});
+        tracker.addImage(image, 0);
+        try { tracker.waitForID (0); }
+        catch (InterruptedException e) {}
+        BufferedImage bim = new BufferedImage
+                (image.getWidth(this), image.getHeight(this),
+                        BufferedImage.TYPE_INT_RGB);
+        Graphics2D big = bim.createGraphics();
+        big.drawImage (image, 0, 0, this);
+        return bim;
     }
 
     public void createMenus(){
@@ -47,6 +79,7 @@ public class Main extends JFrame {
                     public void windowClosing(WindowEvent windowEvent) {
                         System.out.println("Settings Closed");
                         //call member functions of settings page here
+
                     }
                 });
             }
@@ -89,8 +122,6 @@ public class Main extends JFrame {
 
     public static void main(String[] args){
         JFrame main = new Main();
-        main.setSize(600,600);
-        main.setVisible(true);
         main.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e){
                 System.exit(0);
