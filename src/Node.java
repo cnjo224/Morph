@@ -1,11 +1,12 @@
-import java.awt.*;
-
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
  * Project: CS 335 Program 3 - Morph
  * References:
  * Notes:
  */
+
+import java.awt.*;
+
 public class Node {
     private int x, y, imgX, imgY, cols, rows, pictureWidth,
             xCoord[] = new int[4],
@@ -20,8 +21,8 @@ public class Node {
         cols = Cols;
         rows = Rows;
 
-        imgX = x * Math.floorDiv(pictureWidth,cols); // Position in the pane/picture
-        imgY = y * Math.floorDiv(pictureWidth,rows);
+        imgX = x * Math.floorDiv(pictureWidth,cols-1); // Position in the pane/picture
+        imgY = y * Math.floorDiv(pictureWidth,rows-1);
 
         xCoord[0] = imgX - size;
         xCoord[1] = imgX + size;
@@ -53,7 +54,7 @@ public class Node {
     }
 
     public void drawNode(Graphics g) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.BLUE);
         g.drawPolygon(node);
         g.fillPolygon(node);
     }

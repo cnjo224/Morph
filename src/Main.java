@@ -29,10 +29,11 @@ public class Main extends JFrame {
         imgView = new Picture(readImage("res/boat.gif"), rows, columns);
         //imgView = new Picture(image, rows, columns);
         endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
-        c.add(imgView);
-        c.add(endView);
+        c.add(imgView, BorderLayout.EAST);
+        c.add(endView, BorderLayout.WEST);
 
-        setSize(1200,600);
+
+        setSize(1220,700);
         setVisible(true);
     }
 
@@ -49,7 +50,8 @@ public class Main extends JFrame {
         try { tracker.waitForID (0); }
         catch (InterruptedException e) {}
         BufferedImage bim = new BufferedImage
-                (image.getWidth(this), image.getHeight(this),
+                (600, 600,
+                /*(image.getWidth(this), image.getHeight(this),*/
                         BufferedImage.TYPE_INT_RGB);
         Graphics2D big = bim.createGraphics();
         big.drawImage (image, 0, 0, this);

@@ -10,7 +10,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class Picture extends JPanel {
-    private int rows, cols;
+    private int rows, cols, trueRow, trueCol;
     private BufferedImage bim;
     private Node points[][];
 
@@ -18,13 +18,15 @@ public class Picture extends JPanel {
         this.bim = bim;
         this.rows = rows;
         this.cols = cols;
-        points = new Node[rows][cols];
+        trueRow = rows+2;
+        trueCol = cols+2;
+        points = new Node[trueRow][trueCol];
         setPreferredSize(new Dimension(600, 600));
 
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < trueCol; i++) {
+            for (int j = 0; j < trueRow; j++) {
                 //if (i > 0 || i <= cols || j > 0 || j <= rows) {
-                    points[i][j] = new Node(i, j, 600, cols, rows);
+                    points[i][j] = new Node(i, j, 600, trueCol, trueRow);
                 //}
             }
         }
@@ -34,22 +36,22 @@ public class Picture extends JPanel {
         int x, y, xR = 0, yR = 0, xD = 0, yD = 0, xDiag = 0, yDiag = 0;
         Triangle t;
         // Declare triangles within this lines
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < trueCol; i++) {
+            for (int j = 0; j < trueRow; j++) {
                 x = points[i][j].getImgX();
                 y = points[i][j].getImgY();
 
-                if (i < cols-1) { // lines to the right
+                if (i < cols+1) { // lines to the right
                     xR = points[i+1][j].getImgX();
                     yR = points[i+1][j].getImgY();
                     g.drawLine(x, y, xR, yR);
                 }
-                if (j < rows-1) { // lines going down
+                if (j < rows+1) { // lines going down
                     xD = points[i][j+1].getImgX();
                     yD = points[i][j+1].getImgY();
                     g.drawLine(x, y, xD, yD);
                 }
-                if (i < cols-1 && j < rows-1) { // Diagonals
+                if (i < cols+1 && j < rows+1) { // Diagonals
                     xDiag = points[i+1][j+1].getImgX();
                     yDiag = points[i+1][j+1].getImgY();
                     g.drawLine(x, y, xDiag, yDiag);
@@ -58,9 +60,26 @@ public class Picture extends JPanel {
         }
     }
 
-    // TODO: Method to do triangle objects
+    public void paintComponent(Graphics g) {
+        g.setColor(Color.BLUE);
+        Graphics2D g2d = (Graphics2D)g;
 
-    // Starter code
+        g2d.drawImage(bim, 0, 0, this);
+        for (int i = 0; i < trueCol; i++) {
+            for (int j = 0; j < trueRow; j++) {
+                //if (i > 0 || i <= cols+1 || j > 0 || j <= rows+1) {
+                    points[i][j].drawNode(g);
+                //}
+            }
+        }
+        drawLines(g);
+    }
+
+}
+
+// TODO: Method to do triangle objects
+
+// Starter code
     /*public static void warpTriangle (BufferedImage src, BufferedImage dest, Triangle S, Triangle D,
                                      Object ALIASING, Object INTERPOLATION) {
         if (ALIASING == null)
@@ -109,20 +128,3 @@ public class Picture extends JPanel {
         g2.dispose();
     }
     */
-
-    public void paintComponent(Graphics g) {
-        g.setColor(Color.BLACK);
-        Graphics2D g2d = (Graphics2D)g;
-
-        g2d.drawImage(bim, 0, 0, this);
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
-                //if (i > 0 || i <= cols || j > 0 || j <= rows) {
-                    points[i][j].drawNode(g);
-                //}
-            }
-        }
-        drawLines(g);
-    }
-
-}
