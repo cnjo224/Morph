@@ -31,7 +31,8 @@ public class Picture extends JPanel {
     }
 
     public void drawLines(Graphics g) {
-        int x, y;
+        int x, y, xR = 0, yR = 0, xD = 0, yD = 0, xDiag = 0, yDiag = 0;
+        Triangle t;
         // Declare triangles within this lines
         for (int i = 0; i < cols; i++) {
             for (int j = 0; j < rows; j++) {
@@ -39,25 +40,25 @@ public class Picture extends JPanel {
                 y = points[i][j].getImgY();
 
                 if (i < cols-1) { // lines to the right
-                    int xR = points[i+1][j].getImgX();
-                    int yR = points[i+1][j].getImgY();
+                    xR = points[i+1][j].getImgX();
+                    yR = points[i+1][j].getImgY();
                     g.drawLine(x, y, xR, yR);
                 }
                 if (j < rows-1) { // lines going down
-                    int xD = points[i][j+1].getImgX();
-                    int yD = points[i][j+1].getImgY();
+                    xD = points[i][j+1].getImgX();
+                    yD = points[i][j+1].getImgY();
                     g.drawLine(x, y, xD, yD);
                 }
                 if (i < cols-1 && j < rows-1) { // Diagonals
-                    int xDiag = points[i+1][j+1].getImgX();
-                    int yDiag = points[i+1][j+1].getImgY();
+                    xDiag = points[i+1][j+1].getImgX();
+                    yDiag = points[i+1][j+1].getImgY();
                     g.drawLine(x, y, xDiag, yDiag);
                 }
-
-                
             }
         }
     }
+
+    // TODO: Method to do triangle objects
 
     // Starter code
     /*public static void warpTriangle (BufferedImage src, BufferedImage dest, Triangle S, Triangle D,
