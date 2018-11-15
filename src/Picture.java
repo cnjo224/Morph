@@ -34,7 +34,6 @@ public class Picture extends JPanel {
 
     public void drawLines(Graphics g) {
         int x, y, xR = 0, yR = 0, xD = 0, yD = 0, xDiag = 0, yDiag = 0;
-        Triangle t;
         // Declare triangles within this lines
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {

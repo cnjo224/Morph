@@ -28,9 +28,9 @@ public class Main extends JFrame {
 
         imgView = new Picture(readImage("res/boat.gif"), rows, columns);
         //imgView = new Picture(image, rows, columns);
-        endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
+        //endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
         c.add(imgView, BorderLayout.EAST);
-        c.add(endView, BorderLayout.WEST);
+        //c.add(endView, BorderLayout.WEST);
 
 
         setSize(1220,700);

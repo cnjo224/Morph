@@ -7,7 +7,7 @@
 
 import java.awt.*;
 
-public class Node {
+public class Node extends Polygon {
     private int x, y, imgX, imgY, cols, rows, pictureWidth,
             xCoord[] = new int[4],
             yCoord[] = new int[4],
