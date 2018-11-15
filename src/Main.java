@@ -20,18 +20,63 @@ public class Main extends JFrame {
     private Picture imgView, endView;
     private int rows = 10, columns = 10;
     private Container c = getContentPane();
+    private boolean isDragging = false;
 
     //initializer for the JFrame
     public Main(){
         super("Morph");
         this.createMenus();
 
-        imgView = new Picture(readImage("res/boat.gif"), rows, columns);
-        //imgView = new Picture(image, rows, columns);
-        //endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
-        c.add(imgView, BorderLayout.EAST);
-        //c.add(endView, BorderLayout.WEST);
 
+        imgView = new Picture(readImage("res/boat.gif"), rows, columns);
+        imgView.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+                if(imgView.clickInPoly2(e.getPoint())){
+                    isDragging = true;
+                    //MORE HERE
+                    System.out.println("implement mousePressed");
+                }
+            }
+            public void mouseReleased(MouseEvent e) {isDragging = false;}
+            public void mouseEntered(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {}
+        });
+        imgView.addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent e) {
+                if(isDragging){
+                    System.out.println("implement mouseDragged");
+                }
+            }
+            public void mouseMoved(MouseEvent e) {}
+        });
+
+        //imgView = new Picture(image, rows, columns);
+        endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
+        endView.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+                if(endView.clickInPoly2(e.getPoint())){
+                    isDragging = true;
+                    //MORE HERE
+                    System.out.println("implement mousePressed");
+                }
+            }
+            public void mouseReleased(MouseEvent e) {isDragging = false;}
+            public void mouseEntered(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {}
+        });
+        endView.addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent e) {
+                if(isDragging){
+                    System.out.println("implement mouseDragged");
+                }
+            }
+            public void mouseMoved(MouseEvent e) {}
+        });
+
+        c.add(imgView, BorderLayout.EAST);
+        c.add(endView, BorderLayout.WEST);
 
         setSize(1220,700);
         setVisible(true);

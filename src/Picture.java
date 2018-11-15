@@ -26,7 +26,7 @@ public class Picture extends JPanel {
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {
                 //if (i > 0 || i <= cols || j > 0 || j <= rows) {
-                    points[i][j] = new Node(i, j, 600, trueCol, trueRow);
+                    points[i][j] = new Node(i, j, trueCol, trueRow);
                 //}
             }
         }
@@ -37,22 +37,22 @@ public class Picture extends JPanel {
         // Declare triangles within this lines
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {
-                x = points[i][j].getImgX();
-                y = points[i][j].getImgY();
+                x = points[i][j].getImgX()+2;
+                y = points[i][j].getImgY()+2;
 
                 if (i < cols+1) { // lines to the right
-                    xR = points[i+1][j].getImgX();
-                    yR = points[i+1][j].getImgY();
+                    xR = points[i+1][j].getImgX()+2;
+                    yR = points[i+1][j].getImgY()+2;
                     g.drawLine(x, y, xR, yR);
                 }
                 if (j < rows+1) { // lines going down
-                    xD = points[i][j+1].getImgX();
-                    yD = points[i][j+1].getImgY();
+                    xD = points[i][j+1].getImgX()+2;
+                    yD = points[i][j+1].getImgY()+2;
                     g.drawLine(x, y, xD, yD);
                 }
                 if (i < cols+1 && j < rows+1) { // Diagonals
-                    xDiag = points[i+1][j+1].getImgX();
-                    yDiag = points[i+1][j+1].getImgY();
+                    xDiag = points[i+1][j+1].getImgX()+2;
+                    yDiag = points[i+1][j+1].getImgY()+2;
                     g.drawLine(x, y, xDiag, yDiag);
                 }
             }
@@ -67,14 +67,27 @@ public class Picture extends JPanel {
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {
                 //if (i > 0 || i <= cols+1 || j > 0 || j <= rows+1) {
-                    points[i][j].drawNode(g);
                 //}
+                g2d.fillRect(points[i][j].getImgX(),points[i][j].getImgY(), 5,5);
             }
         }
         drawLines(g);
     }
 
+    /************************************/
+    //RUBBER BANDING FUNCTIONS
+    /************************************/
+
+
+
 }
+
+
+
+
+
+
+
 
 // TODO: Method to do triangle objects
 
