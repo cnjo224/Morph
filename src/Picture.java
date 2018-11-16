@@ -33,6 +33,28 @@ public class Picture extends JPanel {
         }
     }
 
+    public Picture(BufferedImage bim, Node[][] tempPoints){
+        this.bim = bim;
+        this.rows = tempPoints.length-2;
+        this.cols = tempPoints.length-2;
+        trueRow = rows+2;
+        trueCol = cols+2;
+        color = Color.BLUE;
+        points = tempPoints;
+        System.out.println("Temp: "+ tempPoints.length + " ;points: " + points.length);
+        setPreferredSize(new Dimension(600, 600));
+
+    }
+
+    public void resetPicture() {
+        for (int i = 0; i < trueCol; i++) {
+            for (int j = 0; j < trueRow; j++) {
+                points[i][j].resetNode();
+            }
+        }
+        repaint();
+    }
+
     public BufferedImage getBim(){return bim;}
 
     public Node[][] getPoints() { return points; }
@@ -92,12 +114,10 @@ public class Picture extends JPanel {
             for(int j=0; j< points.length; j++){
                 if(points[i][j].contains(click) && i != 0 && i != trueCol-1 && j != 0 && j != trueRow-1){
                     activeNode = points[i][j];
-                    System.out.println("Click in point true " + i +"-"+ j);
                     return true;
                 }
             }
         }
-        System.out.println("Click in point false");
         return false;
     }
 
@@ -105,13 +125,11 @@ public class Picture extends JPanel {
         changeNodeColor(activeNode, Color.RED);
         return activeNode;
     }
+
     public void clearActiveNode(){
         if (activeNode != null) {
             changeNodeColor(activeNode, Color.BLACK);
             activeNode = null;
         }
     }
-
-
-
 }

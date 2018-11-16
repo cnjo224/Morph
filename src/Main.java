@@ -163,13 +163,15 @@ public class Main extends JFrame {
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Preview Page");
-                PreviewWindow OpenPreview = new PreviewWindow(settings, imgView, endView.getPoints());
+                PreviewWindow OpenPreview = new PreviewWindow(settings, readImage("res/boat.gif"), imgView.getPoints(), endView.getPoints());
             }
         });
 
         JMenuItem Reset = new JMenuItem("Reset");
         Reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
+                imgView.resetPicture();
+                endView.resetPicture();
                 System.out.println("Reset Images");
             }
         });

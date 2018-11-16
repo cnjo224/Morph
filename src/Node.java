@@ -41,4 +41,12 @@ public class Node extends Polygon {
 
     public Color getColor() { return color; }
     public void setColor(Color color) { this.color = color; }
+
+    public void resetNode() {
+        imgX = x * Math.floorDiv(pictureWidth,cols-1);
+        imgY = y * Math.floorDiv(pictureWidth,rows-1);
+
+        xpoints = new int[]{imgX - size, imgX + size, imgX + size, imgX - size};
+        ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};
+    }
 }

@@ -12,21 +12,31 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 public class PreviewWindow extends JFrame {
 
     private int seconds, framesPerSecond, currFrame = 1;
     private Picture start;
-    private Node[][] end;
+    private Node[][] startP, originalP, end;
+
     private Timer anim;
     private Container c = getContentPane();
 
-    public PreviewWindow(PopupSettings settings, Picture Start, Node[][] End){
+    public PreviewWindow(PopupSettings settings, BufferedImage bim, Node[][] Start, Node[][] End){
         super("Preview");
+        originalP = Start;
+        startP = new Node[Start.length][Start.length];
+        for(int i = 0; i < Start.length; i++){
+            for(int j = 0; j < Start.length; j++){
+                Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), Start.length, Start.length);
+                nd.setImgX(Start[i][j].getImgX());
+                nd.setImgY(Start[i][j].getImgY());
+                startP[i][j] = nd;
+            }
+        }
 
-        start = Start;
-        start.removeMouseListener(start.getMouseListeners()[0]);
-        start.removeMouseMotionListener(start.getMouseMotionListeners()[0]);
+        start = new Picture(bim, startP);
         end = End;
 
         addMenus(settings);
@@ -41,21 +51,13 @@ public class PreviewWindow extends JFrame {
                     currFrame = 1;
                 }
             }
-        }
-        );
+        });
 
         c.add(start);
 
         setSize(650,700);
         setVisible(true);
     }// end Constructor
-
-
-    public void startAnimation() {
-        for(int i = 0; i < framesPerSecond*seconds; i++){
-            animation();
-        }
-    }
 
     public void animation() {
         System.out.println("Entered Animation");
@@ -77,21 +79,26 @@ public class PreviewWindow extends JFrame {
         }
         currFrame++;
         start.repaint();
-        /*try {
-            Thread.sleep(seconds*10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+
+    }
+
+    public void resetPreview() {
+        for(int i = 0; i < originalP.length; i++) {
+            for (int j = 0; j < originalP.length; j++) {
+                startP[i][j].setImgX(originalP[i][j].getImgX());
+                startP[i][j].setImgY(originalP[i][j].getImgY());
+            }
+        }
+        start.repaint();
     }
 
     private void addMenus(PopupSettings settings){
         //Export will produce a window
         JMenuItem FileExport = new JMenuItem("Export");
+        FileExport.setEnabled(false);
         FileExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Export to video file");
-                //startAnimation();
-                anim.start();
             }
         });
 
@@ -124,10 +131,35 @@ public class PreviewWindow extends JFrame {
         File.add(FileSettings);
         File.add(FileExit);
 
+        JMenuItem startButton = new JMenuItem("Start Animation");
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                anim.start();
+            }
+        });
+
+        JMenuItem stopButton = new JMenuItem("Stop Animation");
+        stopButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                anim.stop();
+            }
+        });
+
+        JMenuItem resetButton = new JMenuItem("Reset");
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Reset Button Functionality");
+                resetPreview();
+            }
+        });
+
         //Initialize the menubar and add it to the JFrame
         JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
         menuBar.add(File);
+        menuBar.add(startButton);
+        menuBar.add(stopButton);
+        menuBar.add(resetButton);
     }//end addMenus()
 
 }//end class
