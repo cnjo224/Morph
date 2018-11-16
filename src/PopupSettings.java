@@ -14,12 +14,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class PopupSettings extends JFrame {
-    private int gridSizeDefault = 10, tweenImagesDefault = 30;
-    private int gridSizeValue=10, tweenImageValue=30;
+    private int gridSizeDefault = 10, tweenImagesDefault = 30, previewSecondsDefault = 2;
+    private int gridSizeValue=10, tweenImageValue=30, previewSeconds = 2;
     private boolean applyHit = false;
 
     //These must be global to ensure access within event listeners
-    private JSpinner gridSize, tweenImages;
+    private JSpinner gridSize, tweenImages, secondsSelect;
 
     public PopupSettings(){
         super("Settings");
@@ -31,10 +31,12 @@ public class PopupSettings extends JFrame {
                 if(applyHit){
                     gridSizeValue = (Integer)gridSize.getValue();
                     tweenImageValue = (Integer)tweenImages.getValue();
+                    previewSeconds = (Integer)secondsSelect.getValue();
                     applyHit = false;
                 }else{//if apply wasn't hit, then reset the spinners to previously applied values
                     gridSize.setValue(gridSizeValue);
                     tweenImages.setValue(tweenImageValue);
+                    secondsSelect.setValue(previewSeconds);
                 }
             }
         });
@@ -52,6 +54,11 @@ public class PopupSettings extends JFrame {
         SpinnerModel model = new SpinnerNumberModel( tweenImagesDefault,1,100,1);
         tweenImages = new JSpinner(model);
 
+        JLabel secondsLabel = new JLabel("Seconds of Preview: ");
+
+        SpinnerModel secModel = new SpinnerNumberModel(previewSecondsDefault, 1, 10, 1);
+        secondsSelect = new JSpinner(secModel);
+
         JButton applyButton = new JButton("Apply");
         applyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -64,6 +71,7 @@ public class PopupSettings extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 gridSize.setValue(gridSizeDefault);
                 tweenImages.setValue(tweenImagesDefault);
+                secondsSelect.setValue(previewSecondsDefault);
             }
         });
 
@@ -72,17 +80,20 @@ public class PopupSettings extends JFrame {
         add(gridSize);
         add(tweenImagesLabel);
         add(tweenImages);
+        add(secondsLabel);
+        add(secondsSelect);
         add(applyButton);
         add(resetButton);
 
         //Format and visualize JFrame
-        setLayout(new GridLayout(3,2, 10, 10));
-        setSize(400,125);
+        setLayout(new GridLayout(4,2, 10, 10));
+        setSize(400,175);
         setResizable(false);
     }//end constructor
 
     //return set information
     public int getGridSizeValue(){return gridSizeValue;}
     public int getTweenImageValue(){return tweenImageValue;}
+    public int getSeconds(){return previewSeconds;}
 
 }//End class

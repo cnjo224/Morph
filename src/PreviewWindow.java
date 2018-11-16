@@ -24,11 +24,11 @@ public class PreviewWindow extends JFrame {
         super("Preview");
         start = Start;
         end = End;
-        // Change these to be dynamic
-        seconds = 5;
-        framesPerSecond = 20;
 
         addMenus(settings);
+        framesPerSecond = settings.getTweenImageValue();
+        seconds = settings.getSeconds();
+        
         animation();
 
 
@@ -69,8 +69,9 @@ public class PreviewWindow extends JFrame {
                 settings.setVisible(true);
                 settings.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent windowEvent) {
-                        System.out.println("Settings Closed");
                         //call member functions of settings page here
+                        framesPerSecond = settings.getTweenImageValue();
+                        seconds = settings.getSeconds();
                     }
                 });
             }
