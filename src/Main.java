@@ -46,10 +46,12 @@ public class Main extends JFrame {
         imgView.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
-                    Node nd = imgView.getActiveNode();
-                    nd.setImgX(e.getX());
-                    nd.setImgY(e.getY());
-                    imgView.repaint();
+                    if(e.getX() >=0 && e.getX() < imgView.getWidth() && e.getY() >=0 && e.getY() < imgView.getHeight()) {
+                        Node nd = imgView.getActiveNode();
+                        nd.setImgX(e.getX());
+                        nd.setImgY(e.getY());
+                        imgView.repaint();
+                    }
                 }
             }
             public void mouseMoved(MouseEvent e) {}
@@ -74,10 +76,12 @@ public class Main extends JFrame {
         endView.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
-                    Node nd = endView.getActiveNode();
-                    nd.setImgX(e.getX());
-                    nd.setImgY(e.getY());
-                    endView.repaint();
+                    if(e.getX() >=0 && e.getX() < endView.getWidth() && e.getY() >=0 && e.getY() < endView.getHeight()) {
+                        Node nd = endView.getActiveNode();
+                        nd.setImgX(e.getX());
+                        nd.setImgY(e.getY());
+                        endView.repaint();
+                    }
                 }
             }
             public void mouseMoved(MouseEvent e) {}
