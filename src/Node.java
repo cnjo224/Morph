@@ -5,11 +5,12 @@
  * Notes:
  */
 
+import javax.print.attribute.standard.Sides;
 import java.awt.*;
 
 public class Node extends Polygon {
     private int x, y, imgX, imgY, cols, rows;
-    private final int pictureWidth = 600, size = 4;
+    private final int pictureWidth = 600, size = 10;
 
     public Node(int X, int Y, int Cols, int Rows){
         x = X; // Position in the array
@@ -23,6 +24,8 @@ public class Node extends Polygon {
         xpoints = new int[]{imgX - size, imgX + size, imgX + size, imgX - size};
         ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};
 
+        npoints = 4;
+
     }
 
     public int getX(){return x;}
@@ -30,6 +33,9 @@ public class Node extends Polygon {
 
     public int getImgX(){ return imgX; }
     public int getImgY() { return imgY; }
+
+    public void setImgX(int xLocation){imgX = xLocation;}
+    public void  setImgY(int yLocation){imgY = yLocation;}
 
     public void setX(int X){
         x = X;

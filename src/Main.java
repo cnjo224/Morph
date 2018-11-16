@@ -34,18 +34,22 @@ public class Main extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if(imgView.clickInPoly2(e.getPoint())){
                     isDragging = true;
-                    //MORE HERE
-                    System.out.println("implement mousePressed");
                 }
             }
-            public void mouseReleased(MouseEvent e) {isDragging = false;}
+            public void mouseReleased(MouseEvent e) {
+                isDragging = false;
+                imgView.clearActiveNode();
+            }
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
         });
         imgView.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
-                    System.out.println("implement mouseDragged");
+                    Node nd = imgView.getActiveNode();
+                    nd.setImgX(e.getX());
+                    nd.setImgY(e.getY());
+                    imgView.repaint();
                 }
             }
             public void mouseMoved(MouseEvent e) {}
@@ -58,18 +62,22 @@ public class Main extends JFrame {
             public void mousePressed(MouseEvent e) {
                 if(endView.clickInPoly2(e.getPoint())){
                     isDragging = true;
-                    //MORE HERE
-                    System.out.println("implement mousePressed");
                 }
             }
-            public void mouseReleased(MouseEvent e) {isDragging = false;}
+            public void mouseReleased(MouseEvent e) {
+                isDragging = false;
+                endView.clearActiveNode();
+            }
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
         });
         endView.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
-                    System.out.println("implement mouseDragged");
+                    Node nd = endView.getActiveNode();
+                    nd.setImgX(e.getX());
+                    nd.setImgY(e.getY());
+                    endView.repaint();
                 }
             }
             public void mouseMoved(MouseEvent e) {}

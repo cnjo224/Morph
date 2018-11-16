@@ -13,6 +13,7 @@ public class Picture extends JPanel {
     private int rows, cols, trueRow, trueCol;
     private BufferedImage bim;
     private Node points[][];
+    private Node activeNode;
 
     public Picture(BufferedImage bim, int rows, int cols) {
         this.bim = bim;
@@ -68,6 +69,7 @@ public class Picture extends JPanel {
             for (int j = 0; j < trueRow; j++) {
                 //if (i > 0 || i <= cols+1 || j > 0 || j <= rows+1) {
                 //}
+                //g2d.drawPolygon(points[i][j]);
                 g2d.fillRect(points[i][j].getImgX(),points[i][j].getImgY(), 5,5);
             }
         }
@@ -77,6 +79,22 @@ public class Picture extends JPanel {
     /************************************/
     //RUBBER BANDING FUNCTIONS
     /************************************/
+
+    public boolean clickInPoly2(Point click){
+        for(int i =0; i < points.length; i++){
+            for(int j=0; j< points.length; j++){
+                if(points[i][j].contains(click)){
+                    activeNode = points[i][j];
+                    System.out.println("Click in poly true" + i +"-"+ j);
+                    return true;
+                }
+            }
+        }System.out.println("Click in poly false");
+        return false;
+    }
+
+    public Node getActiveNode(){return activeNode;}
+    public void clearActiveNode(){activeNode = null;}
 
 
 
