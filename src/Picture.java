@@ -71,6 +71,8 @@ public class Picture extends JPanel {
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
 
+        g2d.clearRect(0, 0, getWidth(), getHeight());
+
         g2d.drawImage(bim, 0, 0, this);
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {
