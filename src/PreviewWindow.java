@@ -25,26 +25,33 @@ public class PreviewWindow extends JFrame {
 
     public PreviewWindow(PopupSettings settings, Picture Start, Node[][] End){
         super("Preview");
+
         start = Start;
+        start.removeMouseListener(start.getMouseListeners()[0]);
+        start.removeMouseMotionListener(start.getMouseMotionListeners()[0]);
         end = End;
 
         addMenus(settings);
         framesPerSecond = settings.getTweenImageValue();
         seconds = settings.getSeconds();
-        c.add(Start);
+        anim = new Timer(seconds * 1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                animation();
+            }
+        }
+        );
 
-        setSize(700,700);
+        c.add(start);
+
+        setSize(650,700);
         setVisible(true);
     }// end Constructor
+
 
     public void startAnimation() {
         for(int i = 0; i < framesPerSecond*seconds; i++){
             animation();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -70,6 +77,11 @@ public class PreviewWindow extends JFrame {
             }
         }
         start.repaint();
+        /*try {
+            Thread.sleep(seconds*10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
     }
 
     private void addMenus(PopupSettings settings){
@@ -78,7 +90,12 @@ public class PreviewWindow extends JFrame {
         FileExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Export to video file");
-                startAnimation();
+                //startAnimation();
+                anim.start();
+                if (currFrame > seconds*framesPerSecond) {
+                    anim.stop();
+                    currFrame = 1;
+                }
             }
         });
 

@@ -33,6 +33,8 @@ public class Picture extends JPanel {
         }
     }
 
+    public BufferedImage getBim(){return bim;}
+
     public Node[][] getPoints() { return points; }
     public void changeNodeColor(Node n, Color color) { n.setColor(color); }
 
