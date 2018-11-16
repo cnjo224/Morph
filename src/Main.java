@@ -32,7 +32,7 @@ public class Main extends JFrame {
         imgView.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {
-                if(imgView.clickInPoly2(e.getPoint())){
+                if(imgView.clickInPoint(e.getPoint())){
                     isDragging = true;
                 }
             }
@@ -60,7 +60,7 @@ public class Main extends JFrame {
         endView.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {
-                if(endView.clickInPoly2(e.getPoint())){
+                if(endView.clickInPoint(e.getPoint())){
                     isDragging = true;
                 }
             }
@@ -158,7 +158,7 @@ public class Main extends JFrame {
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Preview Page");
-                PreviewWindow OpenPreview = new PreviewWindow(settings);
+                PreviewWindow OpenPreview = new PreviewWindow(settings, imgView.getPoints(), endView.getPoints());
             }
         });
 

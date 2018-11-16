@@ -7,21 +7,52 @@
  */
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class PreviewWindow extends JFrame{
+public class PreviewWindow extends JFrame {
 
-    public PreviewWindow(PopupSettings settings){
+    private int seconds, framesPerSecond;
+    private JPanel animationPanel = new JPanel();
+    private Node[][] start, end;
+    private Container c = getContentPane();
+
+    public PreviewWindow(PopupSettings settings, Node[][] Start, Node[][] End){
         super("Preview");
+        start = Start;
+        end = End;
+        // Change these to be dynamic
+        seconds = 5;
+        framesPerSecond = 20;
 
         addMenus(settings);
+        animation();
 
-        setSize(300,300);
+
+        setSize(700,700);
         setVisible(true);
-    }// End Constructor
+    }// end Constructor
+
+    public void animation() {
+        int x, y, x1, x2, y1, y2;
+        for (int i = 0; i < start.length; i++) {
+            for (int j = 0; j < start[i].length; j++) {
+                x1 = start[i][j].getImgX();
+                y1 = start[i][j].getImgY();
+                x2 = end[i][j].getImgX();
+                y2 = end[i][j].getImgY();
+
+                x = x1; // + the percentage to get to x2 -(x2-x1) * ??
+                y = y1; // ^^
+
+                // Change the coordinates of x and y of the start panel and redraw.
+            }
+        }
+
+    }
 
     private void addMenus(PopupSettings settings){
         //Export will produce a window
@@ -66,4 +97,4 @@ public class PreviewWindow extends JFrame{
         menuBar.add(File);
     }//end addMenus()
 
-}//End class
+}//end class

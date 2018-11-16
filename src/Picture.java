@@ -14,6 +14,7 @@ public class Picture extends JPanel {
     private BufferedImage bim;
     private Node points[][];
     private Node activeNode;
+    private Color color;
 
     public Picture(BufferedImage bim, int rows, int cols) {
         this.bim = bim;
@@ -21,6 +22,7 @@ public class Picture extends JPanel {
         this.cols = cols;
         trueRow = rows+2;
         trueCol = cols+2;
+        color = Color.BLUE;
         points = new Node[trueRow][trueCol];
         setPreferredSize(new Dimension(600, 600));
 
@@ -32,6 +34,9 @@ public class Picture extends JPanel {
             }
         }
     }
+
+    public Node[][] getPoints() { return points; }
+
 
     public void drawLines(Graphics g) {
         int x, y, xR = 0, yR = 0, xD = 0, yD = 0, xDiag = 0, yDiag = 0;
@@ -60,8 +65,10 @@ public class Picture extends JPanel {
         }
     }
 
+    public void changeNodeColor(Node n) { n.setColor(Color.RED); }
+
+
     public void paintComponent(Graphics g) {
-        g.setColor(Color.BLUE);
         Graphics2D g2d = (Graphics2D)g;
 
         g2d.drawImage(bim, 0, 0, this);
@@ -70,6 +77,7 @@ public class Picture extends JPanel {
                 //if (i > 0 || i <= cols+1 || j > 0 || j <= rows+1) {
                 //}
                 //g2d.drawPolygon(points[i][j]);
+                g.setColor(points[i][j].getColor());
                 g2d.fillRect(points[i][j].getImgX(),points[i][j].getImgY(), 5,5);
             }
         }
@@ -80,20 +88,24 @@ public class Picture extends JPanel {
     //RUBBER BANDING FUNCTIONS
     /************************************/
 
-    public boolean clickInPoly2(Point click){
+    public boolean clickInPoint(Point click){
         for(int i =0; i < points.length; i++){
             for(int j=0; j< points.length; j++){
                 if(points[i][j].contains(click)){
                     activeNode = points[i][j];
-                    System.out.println("Click in poly true" + i +"-"+ j);
+                    System.out.println("Click in point true " + i +"-"+ j);
                     return true;
                 }
             }
-        }System.out.println("Click in poly false");
+        }
+        System.out.println("Click in point false");
         return false;
     }
 
-    public Node getActiveNode(){return activeNode;}
+    public Node getActiveNode(){
+        changeNodeColor(activeNode);
+        return activeNode;
+    }
     public void clearActiveNode(){activeNode = null;}
 
 
