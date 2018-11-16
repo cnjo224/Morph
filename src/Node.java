@@ -39,16 +39,6 @@ public class Node extends Polygon {
     public void setImgX(int xLocation){imgX = xLocation;}
     public void  setImgY(int yLocation){imgY = yLocation;}
 
-    public void setX(int X){
-        x = X;
-        imgX = x * Math.floorDiv(pictureWidth,cols);
-    }
-
-    public void setY(int Y){
-        y= Y;
-        imgY = Y * Math.floorDiv(pictureWidth,rows);
-    }
-
     public Color getColor() { return color; }
     public void setColor(Color color) { this.color = color; }
 }

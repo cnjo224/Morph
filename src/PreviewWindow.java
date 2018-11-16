@@ -13,8 +13,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import static java.lang.Thread.*;
-
 public class PreviewWindow extends JFrame {
 
     private int seconds, framesPerSecond, currFrame = 1;
@@ -34,10 +32,14 @@ public class PreviewWindow extends JFrame {
         addMenus(settings);
         framesPerSecond = settings.getTweenImageValue();
         seconds = settings.getSeconds();
-        anim = new Timer(seconds * 1000, new ActionListener() {
+        anim = new Timer(seconds*10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 animation();
+                if (currFrame > seconds*framesPerSecond) {
+                    anim.stop();
+                    currFrame = 1;
+                }
             }
         }
         );
@@ -56,6 +58,7 @@ public class PreviewWindow extends JFrame {
     }
 
     public void animation() {
+        System.out.println("Entered Animation");
         int x, y, x1, x2, y1, y2;
         for (int i = 0; i < end.length; i++) {
             for (int j = 0; j < end[i].length; j++) {
@@ -64,18 +67,15 @@ public class PreviewWindow extends JFrame {
                 x2 = end[i][j].getImgX();
                 y2 = end[i][j].getImgY();
 
-                x = (x2-x1) * ((currFrame)/(framesPerSecond*seconds)) + x1;
-                y = (y2-y1) * ((currFrame)/(framesPerSecond*seconds)) + y1;
-                currFrame++;
+                x = ((x2-x1) * currFrame/(framesPerSecond*seconds)) + x1;
+                y = ((y2-y1) * currFrame/(framesPerSecond*seconds)) + y1;
 
                 // Change the coordinates of x and y of the start panel and redraw.
                 start.getPoints()[i][j].setImgX(x);
                 start.getPoints()[i][j].setImgY(y);
-                //start.getPoints()[i][j].setImgX(x2);
-                //start.getPoints()[i][j].setImgY(y2);
-
             }
         }
+        currFrame++;
         start.repaint();
         /*try {
             Thread.sleep(seconds*10);
@@ -92,10 +92,6 @@ public class PreviewWindow extends JFrame {
                 System.out.println("Export to video file");
                 //startAnimation();
                 anim.start();
-                if (currFrame > seconds*framesPerSecond) {
-                    anim.stop();
-                    currFrame = 1;
-                }
             }
         });
 

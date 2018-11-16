@@ -106,8 +106,10 @@ public class Picture extends JPanel {
         return activeNode;
     }
     public void clearActiveNode(){
-        changeNodeColor(activeNode, Color.BLACK);
-        activeNode = null;
+        if (activeNode != null) {
+            changeNodeColor(activeNode, Color.BLACK);
+            activeNode = null;
+        }
     }
 
 
