@@ -83,8 +83,8 @@ public class Main extends JFrame {
             public void mouseMoved(MouseEvent e) {}
         });
 
-        c.add(imgView, BorderLayout.EAST);
-        c.add(endView, BorderLayout.WEST);
+        c.add(imgView, BorderLayout.WEST);
+        c.add(endView, BorderLayout.EAST);
 
         setSize(1220,700);
         setVisible(true);
@@ -158,7 +158,7 @@ public class Main extends JFrame {
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Preview Page");
-                PreviewWindow OpenPreview = new PreviewWindow(settings, imgView.getPoints(), endView.getPoints());
+                PreviewWindow OpenPreview = new PreviewWindow(settings, imgView, endView.getPoints());
             }
         });
 

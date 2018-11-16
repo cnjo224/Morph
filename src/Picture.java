@@ -5,8 +5,6 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class Picture extends JPanel {
@@ -36,7 +34,7 @@ public class Picture extends JPanel {
     }
 
     public Node[][] getPoints() { return points; }
-
+    public void changeNodeColor(Node n, Color color) { n.setColor(color); }
 
     public void drawLines(Graphics g) {
         int x, y, xR = 0, yR = 0, xD = 0, yD = 0, xDiag = 0, yDiag = 0;
@@ -64,9 +62,6 @@ public class Picture extends JPanel {
             }
         }
     }
-
-    public void changeNodeColor(Node n) { n.setColor(Color.RED); }
-
 
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
@@ -105,10 +100,13 @@ public class Picture extends JPanel {
     }
 
     public Node getActiveNode(){
-        changeNodeColor(activeNode);
+        changeNodeColor(activeNode, Color.RED);
         return activeNode;
     }
-    public void clearActiveNode(){activeNode = null;}
+    public void clearActiveNode(){
+        changeNodeColor(activeNode, Color.BLACK);
+        activeNode = null;
+    }
 
 
 

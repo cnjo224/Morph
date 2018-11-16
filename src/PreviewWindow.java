@@ -13,14 +13,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import static java.lang.Thread.*;
+
 public class PreviewWindow extends JFrame {
 
-    private int seconds, framesPerSecond;
-    private JPanel animationPanel = new JPanel();
-    private Node[][] start, end;
+    private int seconds, framesPerSecond, currFrame = 1;
+    private Picture start;
+    private Node[][] end;
+    private Timer anim;
     private Container c = getContentPane();
 
-    public PreviewWindow(PopupSettings settings, Node[][] Start, Node[][] End){
+    public PreviewWindow(PopupSettings settings, Picture Start, Node[][] End){
         super("Preview");
         start = Start;
         end = End;
@@ -28,30 +31,45 @@ public class PreviewWindow extends JFrame {
         addMenus(settings);
         framesPerSecond = settings.getTweenImageValue();
         seconds = settings.getSeconds();
-        
-        animation();
-
+        c.add(Start);
 
         setSize(700,700);
         setVisible(true);
     }// end Constructor
 
+    public void startAnimation() {
+        for(int i = 0; i < framesPerSecond*seconds; i++){
+            animation();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void animation() {
         int x, y, x1, x2, y1, y2;
-        for (int i = 0; i < start.length; i++) {
-            for (int j = 0; j < start[i].length; j++) {
-                x1 = start[i][j].getImgX();
-                y1 = start[i][j].getImgY();
+        for (int i = 0; i < end.length; i++) {
+            for (int j = 0; j < end[i].length; j++) {
+                x1 = start.getPoints()[i][j].getImgX();
+                y1 = start.getPoints()[i][j].getImgY();
                 x2 = end[i][j].getImgX();
                 y2 = end[i][j].getImgY();
 
-                x = x1; // + the percentage to get to x2 -(x2-x1) * ??
-                y = y1; // ^^
+                x = (x2-x1) * ((currFrame)/(framesPerSecond*seconds)) + x1;
+                y = (y2-y1) * ((currFrame)/(framesPerSecond*seconds)) + y1;
+                currFrame++;
 
                 // Change the coordinates of x and y of the start panel and redraw.
+                start.getPoints()[i][j].setImgX(x);
+                start.getPoints()[i][j].setImgY(y);
+                //start.getPoints()[i][j].setImgX(x2);
+                //start.getPoints()[i][j].setImgY(y2);
+
             }
         }
-
+        start.repaint();
     }
 
     private void addMenus(PopupSettings settings){
@@ -60,6 +78,7 @@ public class PreviewWindow extends JFrame {
         FileExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Export to video file");
+                startAnimation();
             }
         });
 
