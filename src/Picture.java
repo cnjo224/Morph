@@ -90,7 +90,7 @@ public class Picture extends JPanel {
     public boolean clickInPoint(Point click){
         for(int i =0; i < points.length; i++){
             for(int j=0; j< points.length; j++){
-                if(points[i][j].contains(click)){
+                if(points[i][j].contains(click) && i != 0 && i != trueCol-1 && j != 0 && j != trueRow-1){
                     activeNode = points[i][j];
                     System.out.println("Click in point true " + i +"-"+ j);
                     return true;
