@@ -90,7 +90,8 @@ public class Main extends JFrame {
         c.add(imgView, BorderLayout.WEST);
         c.add(endView, BorderLayout.EAST);
 
-        setSize(1220,700);
+        setSize(1220,655);
+        setResizable(false);
         setVisible(true);
     }
 
