@@ -1,9 +1,8 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
- * Project: CS 335 Program 3 - Morph
- * References: Caitlin's Bombs Project
- * Notes: This is a
- *
+ * Project: CS 335 Program 3 - JMorph
+ * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.)
+ * Notes: This class initializes a JFrame for holding and accessing the Morphing and control point settings
  */
 
 import javax.swing.*;
@@ -33,7 +32,8 @@ public class PopupSettings extends JFrame {
                     tweenImageValue = (Integer)tweenImages.getValue();
                     previewSeconds = (Integer)secondsSelect.getValue();
                     applyHit = false;
-                }else{//if apply wasn't hit, then reset the spinners to previously applied values
+                }else{
+                    //if apply wasn't hit, then reset the spinners to previously applied values
                     gridSize.setValue(gridSizeValue);
                     tweenImages.setValue(tweenImageValue);
                     secondsSelect.setValue(previewSeconds);
@@ -46,7 +46,7 @@ public class PopupSettings extends JFrame {
         //length of one size of the grid. Must be square grid size
         SpinnerModel gridModel = new SpinnerNumberModel(gridSizeDefault, 10, 10, 1);
         gridSize = new JSpinner(gridModel);
-        gridSize.setEnabled(false);
+        gridSize.setEnabled(false); //Currently only works on 10x10 grid (+2 for non-movable control points)
 
         JLabel tweenImagesLabel = new JLabel("Frames Per Second: ");
 
@@ -59,6 +59,7 @@ public class PopupSettings extends JFrame {
         SpinnerModel secModel = new SpinnerNumberModel(previewSecondsDefault, 1, 10, 1);
         secondsSelect = new JSpinner(secModel);
 
+        //When apply is clicked, the settings are saved, otherwise they're discarded when the window closes
         JButton applyButton = new JButton("Apply");
         applyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -66,6 +67,7 @@ public class PopupSettings extends JFrame {
             }
         });
 
+        //Reset the settings values to default
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -92,7 +94,7 @@ public class PopupSettings extends JFrame {
     }//end constructor
 
     //return set information
-    public int getGridSizeValue(){return gridSizeValue;}
+    public int getGridSizeValue(){return gridSizeValue;} //Will use in Morph Part 2
     public int getTweenImageValue(){return tweenImageValue;}
     public int getSeconds(){return previewSeconds;}
 

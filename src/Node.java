@@ -1,13 +1,12 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
- * Project: CS 335 Program 3 - Morph
+ * Project: CS 335 Program 3 - JMorph
  * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.)
  * Notes: This class initializes the nodes or control points that we will use to control the morphing from one image
  *        to the other.
  */
 
 import java.awt.*;
-
 
 public class Node extends Polygon {
     private int x, y, imgX, imgY, cols, rows;
@@ -16,8 +15,8 @@ public class Node extends Polygon {
 
     // Constructor: initializes the node based on its position in a 2D array and calculates its pixel position in a panel.
     public Node(int X, int Y, int Cols, int Rows){
-        x = X; // X Position in the array (column)
-        y = Y; // Y Position in the array (row)
+        x = X; // X Position in the array (row)
+        y = Y; // Y Position in the array (column)
         cols = Cols; // Columns in the 2D array
         rows = Rows; // Rows in the 2D array
         color = Color.BLACK; // Default node color
@@ -30,7 +29,7 @@ public class Node extends Polygon {
 
         npoints = 4; // Number of sides of the polygon
 
-    }
+    }//End constructor
 
     // Return the x and y coordinates of the point in the 2D array
     public int getX(){return x;}
@@ -55,5 +54,5 @@ public class Node extends Polygon {
 
         xpoints = new int[]{imgX - size, imgX + size, imgX + size, imgX - size};
         ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};
-    }
-}
+    }//End resetNode()
+}//End class

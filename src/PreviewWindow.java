@@ -1,8 +1,7 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
- * Project: CS 335 Program 3 - Morph
- * References: Caitlin's Bombs Project Settings Page, and other previous projects from this semester (Rubber-banding,
- *             image processing, grid and node creation, etc.)
+ * Project: CS 335 Program 3 - JMorph
+ * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.)
  * Notes: This class sets the window where the preview of the morphing is set (animation of the morphing preview)
  */
 
@@ -15,20 +14,20 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 public class PreviewWindow extends JFrame {
-
     private int seconds, framesPerSecond, currFrame = 1;
     private Picture start;
     private Node[][] startP, originalP, end;
     private Timer anim;
     private Container c = getContentPane();
 
-    // Default constructor of the preview window, gets a panel with an image and shows the linear transformation of
-    // the points from the starting to the ending image
+    /* Default constructor of the preview window, gets a panel with an image and shows the linear transformation of
+     the points from the starting to the ending image*/
     public PreviewWindow(PopupSettings settings, BufferedImage bim, Node[][] Start, Node[][] End){
         super("Preview");
         originalP = Start; // Store the 2D array of control points that was originally passed in for easy resetting.
         startP = new Node[Start.length][Start.length]; // Initialize a new array to store a copy of the original array.
-        // Populate the copy of the array
+
+        // Populate the copy of the array with new Node objects native to the PreviewWindow class only
         for(int i = 0; i < Start.length; i++){
             for(int j = 0; j < Start.length; j++){
                 Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), Start.length, Start.length);
@@ -54,6 +53,7 @@ public class PreviewWindow extends JFrame {
             }
         });
 
+        //add the Picture panel to the JFrame
         c.add(start);
         setSize(650,700);
         setVisible(true);
@@ -80,8 +80,8 @@ public class PreviewWindow extends JFrame {
             }
         }
         currFrame++; // Increase the number of frames rendered
-        start.repaint();
-    }
+        start.repaint(); //repaint each frame
+    }//End animation()
 
     // Reset the preview values to the original position of the preview
     public void resetPreview() {
@@ -92,18 +92,21 @@ public class PreviewWindow extends JFrame {
             }
         }
         start.repaint();
-    }
+    }//End resetPreview()
 
     private void addMenus(PopupSettings settings){
-        //Export will produce a window
+        //Initialize the menuBar
+
+        //Export will produce a savable video (Disabled until Morph Part2)
         JMenuItem FileExport = new JMenuItem("Export");
-        FileExport.setEnabled(false);
         FileExport.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Export to video file");
             }
         });
+        FileExport.setEnabled(false);
 
+        //The settings will transfer between the Morph JFrame and the PreviewWindow JFrame
         JMenuItem FileSettings = new JMenuItem("Settings");
         FileSettings.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -118,6 +121,7 @@ public class PreviewWindow extends JFrame {
             }
         });
 
+        //close the PreviewWindow JFrame
         JMenuItem FileExit = new JMenuItem("Exit");
         FileExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -133,6 +137,7 @@ public class PreviewWindow extends JFrame {
         File.add(FileSettings);
         File.add(FileExit);
 
+        //Initialize the buttons on the menubar (no submenus)
         JMenuItem startButton = new JMenuItem("Start Animation");
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -150,7 +155,7 @@ public class PreviewWindow extends JFrame {
         JMenuItem resetButton = new JMenuItem("Reset");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Reset Button Functionality");
+                //Reset the PreviewWindow to the original locations of the Nodes
                 resetPreview();
             }
         });

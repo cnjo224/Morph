@@ -1,6 +1,6 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
- * Project: CS 335 Program 3 - Morph
+ * Project: CS 335 Program 3 - JMorph
  * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.)
  * Notes: This class creates the panels that contain the image and the control points to setup for the morph.
  */
@@ -30,7 +30,7 @@ public class Picture extends JPanel {
                 points[i][j] = new Node(i, j, trueCol, trueRow);
             }
         }
-    }
+    }//End default constructor
 
     // Constructor for the Picture class, takes in a 2D array of control points to modify it
     public Picture(BufferedImage bim, Node[][] tempPoints){
@@ -40,9 +40,8 @@ public class Picture extends JPanel {
         trueRow = rows+2; // Reset the number of true rows and columns (based on the desired number of control points)
         trueCol = cols+2;
         points = tempPoints; // Reset the control point array
-        System.out.println("Temp: "+ tempPoints.length + " ;points: " + points.length);
         setPreferredSize(new Dimension(600, 600));
-    }
+    }//End alternative constructor
 
     // Function to reset the 2D array to its default values
     public void resetPicture() {
@@ -52,7 +51,7 @@ public class Picture extends JPanel {
             }
         }
         repaint(); // Redraw the array back to default
-    }
+    }//End resetPicture()
 
     // Return the 2D array of control points
     public Node[][] getPoints() { return points; }
@@ -86,27 +85,25 @@ public class Picture extends JPanel {
                 }
             }
         }
-    }
+    }//End drawLines()
 
     // Paint component to draw the image, the control points and the connecting lines.
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
-
         g2d.clearRect(0, 0, getWidth(), getHeight());
         g2d.drawImage(bim, 0, 0, this); // Draw image
+
         // Draw control points
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {
-                g.setColor(points[i][j].getColor());
+                g2d.setColor(points[i][j].getColor());
                 g2d.fillRect(points[i][j].getImgX(),points[i][j].getImgY(), 5,5);
             }
         }
-        drawLines(g); // Draw connecting lines
-    }
 
-    /************************************/
-    //RUBBER BANDING FUNCTIONS
-    /************************************/
+        // Draw connecting lines
+        drawLines(g);
+    }//End paintComponent()
 
     // Identify if there is a click on a control point and activate it.
     public boolean clickInPoint(Point click){
@@ -119,19 +116,20 @@ public class Picture extends JPanel {
             }
         }
         return false;
-    }
-    // Activate node given (to change the color of the control point in both panels)
-    // *** Still not working at the moment
+    }//End clickInPoint()
+
+    // Activate node given (to change the color of the control point in both panels for easy reference)
     public void setActiveNode(int x, int y) {
         this.activeNode = points[x][y];
         changeNodeColor(activeNode, Color.RED);
-        System.out.println("Node : Active");
     }
+
     // Gets the active node and changes it color
     public Node getActiveNode(){
         changeNodeColor(activeNode, Color.RED);
         return activeNode;
     }
+
     // Resets the node when it is no longer active.
     public void clearActiveNode(){
         if (activeNode != null) {
@@ -139,4 +137,4 @@ public class Picture extends JPanel {
             activeNode = null;
         }
     }
-}
+}//End class
