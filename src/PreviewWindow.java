@@ -19,6 +19,7 @@ public class PreviewWindow extends JFrame {
     private Node[][] startP, originalP, end;
     private Timer anim;
     private Container c = getContentPane();
+    private JMenuItem status; //because it's needed inside an event listener
 
     /* Default constructor of the preview window, gets a panel with an image and shows the linear transformation of
      the points from the starting to the ending image*/
@@ -49,6 +50,7 @@ public class PreviewWindow extends JFrame {
                 if (currFrame > seconds*framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
                     anim.stop();
                     currFrame = 1; // Reset the number of frames for future use
+                    status.setText("Status: Finished");
                 }
             }
         });
@@ -62,7 +64,6 @@ public class PreviewWindow extends JFrame {
     // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
     // the starting image to the position on the ending image.
     public void animation() {
-        System.out.println("Animating");
         int x, y, x1, x2, y1, y2;
         for (int i = 0; i < end.length; i++) {
             for (int j = 0; j < end[i].length; j++) {
@@ -142,6 +143,7 @@ public class PreviewWindow extends JFrame {
         startButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 anim.start();
+                status.setText("Status: Running");
             }
         });
 
@@ -149,6 +151,7 @@ public class PreviewWindow extends JFrame {
         stopButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 anim.stop();
+                status.setText("Status: Stopped");
             }
         });
 
@@ -160,6 +163,8 @@ public class PreviewWindow extends JFrame {
             }
         });
 
+        status = new JMenuItem("Status: Not Running");
+
         //Initialize the menubar and add it to the JFrame
         JMenuBar menuBar = new JMenuBar();
         this.setJMenuBar(menuBar);
@@ -167,6 +172,7 @@ public class PreviewWindow extends JFrame {
         menuBar.add(startButton);
         menuBar.add(stopButton);
         menuBar.add(resetButton);
+        menuBar.add(status);
     }//end addMenus()
 
 }//end class
