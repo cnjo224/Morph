@@ -1,9 +1,8 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
  * Project: CS 335 Program 3 - Morph
- * References:
- * Notes:
- *
+ * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.)
+ * Notes: This class 
  */
 
 import javax.imageio.ImageIO;
@@ -14,31 +13,34 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-public class Main extends JFrame {
+public class JMorph extends JFrame {
     public PopupSettings settings = new PopupSettings();
-    private BufferedImage image;
+    private BufferedImage image = readImage("res/boat.gif"), image2 = readImage("res/boatR.jpg");
     private Picture imgView, endView;
     private int rows = 10, columns = 10;
     private Container c = getContentPane();
     private boolean isDragging = false;
 
     //initializer for the JFrame
-    public Main(){
+    public JMorph(){
         super("Morph");
         this.createMenus();
 
-
-        imgView = new Picture(readImage("res/boat.gif"), rows, columns);
+        imgView = new Picture(image, rows, columns);
         imgView.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {
                 if(imgView.clickInPoint(e.getPoint())){
+                    endView.setActiveNode(imgView.getActiveNode().getX(), imgView.getActiveNode().getY());
+                    endView.repaint();
                     isDragging = true;
                 }
             }
             public void mouseReleased(MouseEvent e) {
                 isDragging = false;
                 imgView.clearActiveNode();
+                endView.clearActiveNode();
+                endView.repaint();
             }
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
@@ -48,6 +50,8 @@ public class Main extends JFrame {
                 if(isDragging){
                     if(e.getX() >=0 && e.getX() < imgView.getWidth() && e.getY() >=0 && e.getY() < imgView.getHeight()) {
                         Node nd = imgView.getActiveNode();
+                        //Node endND = endView.getPoints()[nd.getX()][nd.getY()];
+                        //endView.setActiveNode(endND);
                         nd.setImgX(e.getX());
                         nd.setImgY(e.getY());
                         imgView.repaint();
@@ -58,7 +62,7 @@ public class Main extends JFrame {
         });
 
         //imgView = new Picture(image, rows, columns);
-        endView = new Picture(readImage("res/boatR.jpg"), rows, columns);
+        endView = new Picture(image2, rows, columns);
         endView.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {
@@ -123,7 +127,7 @@ public class Main extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open file");
                 JFileChooser fc = new JFileChooser(".");
-                int returnVal = fc.showOpenDialog(Main.this);
+                int returnVal = fc.showOpenDialog(JMorph.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     try {
@@ -163,7 +167,7 @@ public class Main extends JFrame {
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Preview Page");
-                PreviewWindow OpenPreview = new PreviewWindow(settings, readImage("res/boat.gif"), imgView.getPoints(), endView.getPoints());
+                PreviewWindow OpenPreview = new PreviewWindow(settings, image, imgView.getPoints(), endView.getPoints());
             }
         });
 
@@ -185,7 +189,7 @@ public class Main extends JFrame {
 
 
     public static void main(String[] args){
-        JFrame main = new Main();
+        JFrame main = new JMorph();
         main.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e){
                 System.exit(0);

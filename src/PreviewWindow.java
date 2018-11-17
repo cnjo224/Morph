@@ -1,9 +1,9 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
  * Project: CS 335 Program 3 - Morph
- * References: Caitlin's Bombs Project Settings Page
- * Notes:
- *
+ * References: Caitlin's Bombs Project Settings Page, and other previous projects from this semester (Rubber-banding,
+ *             image processing, grid and node creation, etc.)
+ * Notes: This class sets the window where the preview of the morphing is set (animation of the morphing preview)
  */
 
 import javax.swing.*;
@@ -19,14 +19,16 @@ public class PreviewWindow extends JFrame {
     private int seconds, framesPerSecond, currFrame = 1;
     private Picture start;
     private Node[][] startP, originalP, end;
-
     private Timer anim;
     private Container c = getContentPane();
 
+    // Default constructor of the preview window, gets a panel with an image and shows the linear transformation of
+    // the points from the starting to the ending image
     public PreviewWindow(PopupSettings settings, BufferedImage bim, Node[][] Start, Node[][] End){
         super("Preview");
-        originalP = Start;
-        startP = new Node[Start.length][Start.length];
+        originalP = Start; // Store the 2D array of control points that was originally passed in for easy resetting.
+        startP = new Node[Start.length][Start.length]; // Initialize a new array to store a copy of the original array.
+        // Populate the copy of the array
         for(int i = 0; i < Start.length; i++){
             for(int j = 0; j < Start.length; j++){
                 Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), Start.length, Start.length);
@@ -36,52 +38,52 @@ public class PreviewWindow extends JFrame {
             }
         }
 
-        start = new Picture(bim, startP);
+        start = new Picture(bim, startP); // Create a new panel of Picture class.
         end = End;
 
         addMenus(settings);
-        framesPerSecond = settings.getTweenImageValue();
+        framesPerSecond = settings.getTweenImageValue(); // Retrieve the values from the settings window
         seconds = settings.getSeconds();
-        anim = new Timer(seconds*10, new ActionListener() {
-            @Override
+        anim = new Timer(seconds*10, new ActionListener() { // Timer to allow the animation to be visible
             public void actionPerformed(ActionEvent e) {
                 animation();
-                if (currFrame > seconds*framesPerSecond) {
+                if (currFrame > seconds*framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
                     anim.stop();
-                    currFrame = 1;
+                    currFrame = 1; // Reset the number of frames for future use
                 }
             }
         });
 
         c.add(start);
-
         setSize(650,700);
         setVisible(true);
     }// end Constructor
 
+    // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
+    // the starting image to the position on the ending image.
     public void animation() {
-        System.out.println("Entered Animation");
+        System.out.println("Animating");
         int x, y, x1, x2, y1, y2;
         for (int i = 0; i < end.length; i++) {
             for (int j = 0; j < end[i].length; j++) {
-                x1 = start.getPoints()[i][j].getImgX();
-                y1 = start.getPoints()[i][j].getImgY();
-                x2 = end[i][j].getImgX();
-                y2 = end[i][j].getImgY();
-
+                x1 = start.getPoints()[i][j].getImgX(); // Get the x coordinate of the pixel the point is in (starting image)
+                y1 = start.getPoints()[i][j].getImgY(); // Get the y coordinate of the pixel the point is in (starting image)
+                x2 = end[i][j].getImgX(); // Get the y coordinate of the pixel the point is in (ending image)
+                y2 = end[i][j].getImgY(); // Get the y coordinate of the pixel the point is in (ending image)
+                // Compute the difference of the points depending on the number of frames rendered so far (both for x and y)
                 x = ((x2-x1) * currFrame/(framesPerSecond*seconds)) + x1;
                 y = ((y2-y1) * currFrame/(framesPerSecond*seconds)) + y1;
 
-                // Change the coordinates of x and y of the start panel and redraw.
+                // Change the coordinates of x and y of the start panel
                 start.getPoints()[i][j].setImgX(x);
                 start.getPoints()[i][j].setImgY(y);
             }
         }
-        currFrame++;
+        currFrame++; // Increase the number of frames rendered
         start.repaint();
-
     }
 
+    // Reset the preview values to the original position of the preview
     public void resetPreview() {
         for(int i = 0; i < originalP.length; i++) {
             for (int j = 0; j < originalP.length; j++) {
