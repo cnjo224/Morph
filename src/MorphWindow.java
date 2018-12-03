@@ -1,10 +1,20 @@
-import java.awt.image.*;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 
-public class MorphTools {
-    // goes where the morph will occur (morph window)
-    public MorphTools() {}
+public class MorphWindow extends JFrame {
+    private Picture start, end, Morph;
+
+    /* TODO:
+        - Set triangles
+        - Set morphing frames
+        -
+     */
+    public void setTiangles() {
+
+    }
 
     /*****************************************************
      solve Xi = sx*xi + shx*yi + tx    for i = 1,2,3 where xi is a point on
@@ -17,7 +27,7 @@ public class MorphTools {
      used solve the two systems of linear equations.
      ********************************************************/
     public static void warpTriangle(BufferedImage src, BufferedImage dest, Triangle S,
-            Triangle D, Object ALIASING, Object INTERPOLATION) {
+                                    Triangle D, Object ALIASING, Object INTERPOLATION) {
 
         if (ALIASING == null)
             ALIASING = RenderingHints.VALUE_ANTIALIAS_ON;
