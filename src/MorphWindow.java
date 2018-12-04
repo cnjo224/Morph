@@ -7,10 +7,18 @@ import java.awt.image.BufferedImage;
 public class MorphWindow extends JFrame {
     private Picture start, end, Morph;
 
+    public MorphWindow(Picture start, Picture end) {
+        super("Morph");
+
+    }
+
     /* TODO:
         - Set triangles
         - Set morphing frames
-        -
+        - Make reading file in/saving final file work
+        - Grid sizes required (5X5, 10X10, 20X20)
+        - Adjust image brightness
+        - Constraint points in area and make them draggabble again
      */
     public void setTiangles() {
 

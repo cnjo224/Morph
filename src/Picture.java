@@ -93,6 +93,9 @@ public class Picture extends JPanel {
         g2d.clearRect(0, 0, getWidth(), getHeight());
         g2d.drawImage(bim, 0, 0, this); // Draw image
 
+        // Draw connecting lines
+        drawLines(g);
+
         // Draw control points
         for (int i = 0; i < trueCol; i++) {
             for (int j = 0; j < trueRow; j++) {
@@ -100,9 +103,6 @@ public class Picture extends JPanel {
                 g2d.fillRect(points[i][j].getImgX(),points[i][j].getImgY(), 5,5);
             }
         }
-
-        // Draw connecting lines
-        drawLines(g);
     }//End paintComponent()
 
     // Identify if there is a click on a control point and activate it.
