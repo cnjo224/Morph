@@ -55,6 +55,10 @@ public class Picture extends JPanel {
 
     // Return the 2D array of control points
     public Node[][] getPoints() { return points; }
+    // Get a specific point (for easy coordinate access)
+    public Node getPoint(int x, int y) { return points[x][y]; }
+
+    public BufferedImage getPicture() { return bim; }
 
     // Change the color of an individual node in the 2D array
     public void changeNodeColor(Node n, Color color) { n.setColor(color); }

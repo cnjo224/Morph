@@ -5,15 +5,16 @@ import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class MorphWindow extends JFrame {
-    private Picture start, end, Morph;
+    private Picture start, end, morph;
+    private int r, c;
 
     public MorphWindow(Picture start, Picture end) {
         super("Morph");
-
+        this.start = start;
+        this.end = end;
     }
 
     /* TODO:
-        - Set triangles
         - Set morphing frames
         - Make reading file in/saving final file work
         - Grid sizes required (5X5, 10X10, 20X20)
@@ -21,7 +22,37 @@ public class MorphWindow extends JFrame {
         - Constraint points in area and make them draggabble again
      */
     public void setTiangles() {
+        int sx1, sx2, sx3, sx4, dx1, dx2, dx3, dx4;
+        int sy1, sy2, sy3, sy4, dy1, dy2, dy3, dy4;
+        for (int i = 0; i < c+1; i++) {
+            for (int j = 0; j < r+1; j++) {
+                sx1 = start.getPoint(i, j).getImgX();
+                sy1 = start.getPoint(i, j).getImgY();
+                sx2 = start.getPoint(i+1, j).getImgX();
+                sy2 = start.getPoint(i+1, j).getImgY();
+                sx3 = start.getPoint(i, j+1).getImgX();
+                sy3 = start.getPoint(i, j+1).getImgY();
+                sx4 = start.getPoint(i+1, j+1).getImgX();
+                sy4 = start.getPoint(i+1, j+1).getImgY();
 
+                dx1 = morph.getPoint(i, j).getImgX();
+                dy1 = morph.getPoint(i, j).getImgY();
+                dx2 = morph.getPoint(i+1, j).getImgX();
+                dy2 = morph.getPoint(i+1, j).getImgY();
+                dx3 = morph.getPoint(i, j+1).getImgX();
+                dy3 = morph.getPoint(i, j+1).getImgY();
+                dx4 = morph.getPoint(i+1, j+1).getImgX();
+                dy4 = morph.getPoint(i+1, j+1).getImgY();
+
+                Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx3, sy3);
+                Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx3, dy3);
+                warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+
+                S = new Triangle(sx1, sy1, sx4, sy4, sx3, sy3);
+                D = new Triangle(dx1, dy1, dx4, dy4, dx3, dy3);
+                warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+            }
+        }
     }
 
     /*****************************************************
