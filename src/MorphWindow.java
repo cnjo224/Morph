@@ -1,18 +1,68 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 
 public class MorphWindow extends JFrame {
     private Picture start, end, morph;
-    private int r, c;
+    private int r, c, currFrame, framesPerSecond, seconds;
+    private Container C = getContentPane();
+    private Timer animate;
 
-    public MorphWindow(Picture start, Picture end) {
+    public MorphWindow(PopupSettings settings, Picture start, Picture end) {
         super("Morph");
         this.start = start;
         this.end = end;
+        r = start.getPoints().length;
+        c = start.getPoints()[0].length;
+        morph = new Picture(start.getPicture(), start.getPoints());
+
+        //addMenus(settings);
+        framesPerSecond = settings.getTweenImageValue(); // Retrieve the values from the settings window
+        seconds = settings.getSeconds();
+        animate = new Timer(seconds*10, new ActionListener() { // Timer to allow the animation to be visible
+            public void actionPerformed(ActionEvent e) {
+                animation();
+                if (currFrame > seconds*framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
+                    animate.stop();
+                    currFrame = 1; // Reset the number of frames for future use
+                    //status.setText("Status: Finished");
+                }
+            }
+        });
+        animate.start();
+        //add the Picture panel to the JFrame
+        C.add(morph);
+        setSize(650,700);
+        setVisible(true);
     }
+
+    // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
+    // the starting image to the position on the ending image.
+    public void animation() {
+        int x, y, x1, x2, y1, y2;
+        for (int i = 0; i < c; i++) {
+            for (int j = 0; j < r; j++) {
+                x1 = morph.getPoints()[i][j].getImgX(); // Get the x coordinate of the pixel the point is in (starting image)
+                y1 = morph.getPoints()[i][j].getImgY(); // Get the y coordinate of the pixel the point is in (starting image)
+                x2 = end.getPoints()[i][j].getImgX(); // Get the y coordinate of the pixel the point is in (ending image)
+                y2 = end.getPoints()[i][j].getImgY(); // Get the y coordinate of the pixel the point is in (ending image)
+                // Compute the difference of the points depending on the number of frames rendered so far (both for x and y)
+                x = ((x2-x1) * currFrame/(framesPerSecond*seconds)) + x1;
+                y = ((y2-y1) * currFrame/(framesPerSecond*seconds)) + y1;
+
+                // Change the coordinates of x and y of the start panel
+                morph.getPoints()[i][j].setImgX(x);
+                morph.getPoints()[i][j].setImgY(y);
+            }
+        }
+        setTiangles();
+        currFrame++; // Increase the number of frames rendered
+        morph.repaint(); //repaint each frame
+    }//End animation()
 
     /* TODO:
         - Set morphing frames
@@ -27,35 +77,37 @@ public class MorphWindow extends JFrame {
     public void setTiangles() {
         int sx1, sx2, sx3, sx4, dx1, dx2, dx3, dx4;
         int sy1, sy2, sy3, sy4, dy1, dy2, dy3, dy4;
-        for (int i = 0; i < c+1; i++) {
-            for (int j = 0; j < r+1; j++) {
-                // Source triangle (S) points
-                sx1 = start.getPoint(i, j).getImgX();
-                sy1 = start.getPoint(i, j).getImgY();
-                sx2 = start.getPoint(i+1, j).getImgX();
-                sy2 = start.getPoint(i+1, j).getImgY();
-                sx3 = start.getPoint(i, j+1).getImgX();
-                sy3 = start.getPoint(i, j+1).getImgY();
-                sx4 = start.getPoint(i+1, j+1).getImgX();
-                sy4 = start.getPoint(i+1, j+1).getImgY();
+        for (int i = 0; i < c-1; i++) {
+            for (int j = 0; j < r-1; j++) {
+                if (i + 1 <= c || j + 1 <= r) {
+                    // Source triangle (S) points
+                    sx1 = start.getPoint(i, j).getImgX();
+                    sy1 = start.getPoint(i, j).getImgY();
+                    sx2 = start.getPoint(i + 1, j).getImgX();
+                    sy2 = start.getPoint(i + 1, j).getImgY();
+                    sx3 = start.getPoint(i, j + 1).getImgX();
+                    sy3 = start.getPoint(i, j + 1).getImgY();
+                    sx4 = start.getPoint(i + 1, j + 1).getImgX();
+                    sy4 = start.getPoint(i + 1, j + 1).getImgY();
 
-                // Destination triangle (D) points
-                dx1 = morph.getPoint(i, j).getImgX();
-                dy1 = morph.getPoint(i, j).getImgY();
-                dx2 = morph.getPoint(i+1, j).getImgX();
-                dy2 = morph.getPoint(i+1, j).getImgY();
-                dx3 = morph.getPoint(i, j+1).getImgX();
-                dy3 = morph.getPoint(i, j+1).getImgY();
-                dx4 = morph.getPoint(i+1, j+1).getImgX();
-                dy4 = morph.getPoint(i+1, j+1).getImgY();
+                    // Destination triangle (D) points
+                    dx1 = morph.getPoint(i, j).getImgX();
+                    dy1 = morph.getPoint(i, j).getImgY();
+                    dx2 = morph.getPoint(i + 1, j).getImgX();
+                    dy2 = morph.getPoint(i + 1, j).getImgY();
+                    dx3 = morph.getPoint(i, j + 1).getImgX();
+                    dy3 = morph.getPoint(i, j + 1).getImgY();
+                    dx4 = morph.getPoint(i + 1, j + 1).getImgX();
+                    dy4 = morph.getPoint(i + 1, j + 1).getImgY();
 
-                Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx4, sy4);
-                Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx4, dy4);
-                warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+                    Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx4, sy4);
+                    Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx4, dy4);
+                    warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
 
-                S = new Triangle(sx1, sy1, sx3, sy3, sx4, sy4);
-                D = new Triangle(dx1, dy1, dx3, dy3, dx4, dy4);
-                warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+                    S = new Triangle(sx1, sy1, sx3, sy3, sx4, sy4);
+                    D = new Triangle(dx1, dy1, dx3, dy3, dx4, dy4);
+                    warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+                }
             }
         }
     }

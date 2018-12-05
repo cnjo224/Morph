@@ -175,6 +175,14 @@ public class JMorph extends JFrame {
             }
         });
 
+        JMenuItem Morph = new JMenuItem("Morph");
+        Morph.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Open Morph Page");
+                MorphWindow OpenMorph = new MorphWindow(settings, startView, endView);
+            }
+        });
+
         JMenuItem Reset = new JMenuItem("Reset");
         Reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -188,6 +196,7 @@ public class JMorph extends JFrame {
         this.setJMenuBar(menuBar);
         menuBar.add(FileMenu);
         menuBar.add(Preview);
+        menuBar.add(Morph);
         menuBar.add(Reset);
     }//end createMenus function
 
