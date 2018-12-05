@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 
 public class Picture extends JPanel {
     private int rows, cols, trueRow, trueCol;
+    private boolean drawNodes = true;
     private BufferedImage bim;
     private Node points[][];
     private Node activeNode;
@@ -60,6 +61,8 @@ public class Picture extends JPanel {
 
     public BufferedImage getPicture() { return bim; }
 
+    public void ignoreGrid() { drawNodes = false; }
+
     // Change the color of an individual node in the 2D array
     public void changeNodeColor(Node n, Color color) { n.setColor(color); }
 
@@ -97,14 +100,16 @@ public class Picture extends JPanel {
         g2d.clearRect(0, 0, getWidth(), getHeight());
         g2d.drawImage(bim, 0, 0, this); // Draw image
 
-        // Draw connecting lines
-        drawLines(g);
+        if (drawNodes) {
+            // Draw connecting lines
+            drawLines(g);
 
-        // Draw control points
-        for (int i = 0; i < trueCol; i++) {
-            for (int j = 0; j < trueRow; j++) {
-                g2d.setColor(points[i][j].getColor());
-                g2d.fillRect(points[i][j].getImgX(),points[i][j].getImgY(), 5,5);
+            // Draw control points
+            for (int i = 0; i < trueCol; i++) {
+                for (int j = 0; j < trueRow; j++) {
+                    g2d.setColor(points[i][j].getColor());
+                    g2d.fillRect(points[i][j].getImgX(), points[i][j].getImgY(), 5, 5);
+                }
             }
         }
     }//End paintComponent()

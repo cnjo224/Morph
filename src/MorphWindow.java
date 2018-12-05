@@ -61,6 +61,7 @@ public class MorphWindow extends JFrame {
         }
         setTiangles();
         currFrame++; // Increase the number of frames rendered
+        morph.ignoreGrid();
         morph.repaint(); //repaint each frame
     }//End animation()
 
@@ -102,11 +103,11 @@ public class MorphWindow extends JFrame {
 
                     Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx4, sy4);
                     Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx4, dy4);
-                    warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+                    warpTriangle(morph.getPicture(), morph.getPicture(), S, D, null, null);
 
                     S = new Triangle(sx1, sy1, sx3, sy3, sx4, sy4);
                     D = new Triangle(dx1, dy1, dx3, dy3, dx4, dy4);
-                    warpTriangle(start.getPicture(), morph.getPicture(), S, D, null, null);
+                    warpTriangle(morph.getPicture(), morph.getPicture(), S, D, null, null);
                 }
             }
         }
