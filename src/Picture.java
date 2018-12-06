@@ -108,7 +108,7 @@ public class Picture extends JPanel {
             for (int i = 0; i < trueCol; i++) {
                 for (int j = 0; j < trueRow; j++) {
                     g2d.setColor(points[i][j].getColor());
-                    g2d.fillRect(points[i][j].getImgX(), points[i][j].getImgY(), 5, 5);
+                    g2d.fillRect(points[i][j].getImgX(), points[i][j].getImgY(), points[i][j].getSize(), points[i][j].getSize());
                 }
             }
         }
@@ -118,7 +118,7 @@ public class Picture extends JPanel {
     public boolean clickInPoint(Point click){
         for(int i =0; i < points.length; i++){
             for(int j=0; j< points.length; j++){
-                if(points[i][j].contains(click) && i != 0 && i != trueCol-1 && j != 0 && j != trueRow-1){
+                if(points[i][j].contained(click) && i != 0 && i != trueCol-1 && j != 0 && j != trueRow-1){
                     activeNode = points[i][j];
                     return true;
                 }

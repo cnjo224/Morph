@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
@@ -11,6 +13,7 @@ public class MorphWindow extends JFrame {
     private int r, c, currFrame, framesPerSecond, seconds;
     private Container C = getContentPane();
     private Timer animate;
+    private JMenuItem status; //because it's needed inside an event listener
 
     public MorphWindow(PopupSettings settings, Picture start, Picture end) {
         super("Morph");
@@ -20,7 +23,7 @@ public class MorphWindow extends JFrame {
         c = start.getPoints()[0].length;
         morph = new Picture(start.getPicture(), start.getPoints());
 
-        //addMenus(settings);
+        addMenus(settings);
         framesPerSecond = settings.getTweenImageValue(); // Retrieve the values from the settings window
         seconds = settings.getSeconds();
         animate = new Timer(seconds*10, new ActionListener() { // Timer to allow the animation to be visible
@@ -39,6 +42,77 @@ public class MorphWindow extends JFrame {
         setSize(650,700);
         setVisible(true);
     }
+
+    private void addMenus(PopupSettings settings){
+        //Initialize the menuBar
+
+        //Export will produce a savable video (Disabled until Morph Part2)
+        JMenuItem FileExport = new JMenuItem("Export");
+        FileExport.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Export to video file");
+            }
+        });
+        FileExport.setEnabled(false);
+
+        //The settings will transfer between the Morph JFrame and the PreviewWindow JFrame
+        JMenuItem FileSettings = new JMenuItem("Settings");
+        FileSettings.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                settings.setVisible(true);
+                settings.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent windowEvent) {
+                        //call member functions of settings page here
+                        framesPerSecond = settings.getTweenImageValue();
+                        seconds = settings.getSeconds();
+                    }
+                });
+            }
+        });
+
+        //close the PreviewWindow JFrame
+        JMenuItem FileExit = new JMenuItem("Exit");
+        FileExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                MorphWindow.this.dispatchEvent(new WindowEvent(
+                        MorphWindow.this, WindowEvent.WINDOW_CLOSING
+                ));
+            }
+        });
+
+        //Initialize the File menu and add it's child controls
+        JMenu File = new JMenu("File");
+        File.add(FileExport);
+        File.add(FileSettings);
+        File.add(FileExit);
+
+        //Initialize the buttons on the menubar (no submenus)
+        JMenuItem startButton = new JMenuItem("Start Animation");
+        startButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                animate.start();
+                status.setText("Status: Running");
+            }
+        });
+
+        JMenuItem stopButton = new JMenuItem("Stop Animation");
+        stopButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                animate.stop();
+                status.setText("Status: Stopped");
+            }
+        });
+
+        status = new JMenuItem("Status: Not Running");
+
+        //Initialize the menubar and add it to the JFrame
+        JMenuBar menuBar = new JMenuBar();
+        this.setJMenuBar(menuBar);
+        menuBar.add(File);
+        menuBar.add(startButton);
+        menuBar.add(stopButton);
+        menuBar.add(status);
+    }//end addMenus()
 
     // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
     // the starting image to the position on the ending image.
