@@ -155,10 +155,9 @@ public class Picture extends JPanel {
     }//End clickInPoint()
 
     // Activate node given (to change the color of the control point in both panels for easy reference)
-    public void setActiveNode(int X, int Y) {
-        this.activeNode = points[X][Y];
+    public void setActiveNode(int x, int y) {
+        this.activeNode = points[x][y];
         changeNodeColor(activeNode, Color.RED);
-
     }
 
     // Gets the active node and changes it color
@@ -181,7 +180,7 @@ public class Picture extends JPanel {
                     }
                 }
             }
-            
+
             //clear the activeNode
             changeNodeColor(activeNode, Color.BLACK);
             activeNode = null;
