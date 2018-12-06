@@ -31,6 +31,18 @@ public class Picture extends JPanel {
                 points[i][j] = new Node(i, j, trueCol, trueRow);
             }
         }
+        System.out.println(rows + " " + cols);
+        //Initialize the boundary for each control point
+        //the Outside points don't need set because they never move
+        for(int x = 1; x <= this.cols; x++){
+            for(int y = 1; y <= this.rows; y++){
+                int[] pointsX = {points[x-1][y-1].getImgX(), points[x][y-1].getImgX(), points[x+1][y].getImgX(), points[x+1][y+1].getImgX(), points[x][y+1].getImgX(), points[x-1][y].getImgX()};
+                int[] pointsY = {points[x-1][y-1].getImgY(), points[x][y-1].getImgY(), points[x+1][y].getImgY(), points[x+1][y+1].getImgY(), points[x][y+1].getImgY(), points[x-1][y].getImgY()};
+                points[x][y].resetBounds(pointsX, pointsY);
+            }
+        }
+
+
     }//End default constructor
 
     // Constructor for the Picture class, takes in a 2D array of control points to modify it
@@ -51,6 +63,17 @@ public class Picture extends JPanel {
                 points[i][j].resetNode();
             }
         }
+
+        //reset the boundary for each node
+        //the Outside points don't need set because they never move
+        for(int x = 1; x <= this.cols; x++){
+            for(int y = 1; y <= this.rows; y++){
+                int[] pointsX = {points[x-1][y-1].getImgX(), points[x][y-1].getImgX(), points[x+1][y].getImgX(), points[x+1][y+1].getImgX(), points[x][y+1].getImgX(), points[x-1][y].getImgX()};
+                int[] pointsY = {points[x-1][y-1].getImgY(), points[x][y-1].getImgY(), points[x+1][y].getImgY(), points[x+1][y+1].getImgY(), points[x][y+1].getImgY(), points[x-1][y].getImgY()};
+                points[x][y].resetBounds(pointsX, pointsY);
+            }
+        }
+
         repaint(); // Redraw the array back to default
     }//End resetPicture()
 
@@ -112,6 +135,10 @@ public class Picture extends JPanel {
                 }
             }
         }
+        if(activeNode != null){
+            g2d.setColor(Color.GREEN);
+            g2d.drawPolygon(activeNode.getBoundaryPoly());
+        }
     }//End paintComponent()
 
     // Identify if there is a click on a control point and activate it.
@@ -128,9 +155,10 @@ public class Picture extends JPanel {
     }//End clickInPoint()
 
     // Activate node given (to change the color of the control point in both panels for easy reference)
-    public void setActiveNode(int x, int y) {
-        this.activeNode = points[x][y];
+    public void setActiveNode(int X, int Y) {
+        this.activeNode = points[X][Y];
         changeNodeColor(activeNode, Color.RED);
+
     }
 
     // Gets the active node and changes it color
@@ -142,8 +170,30 @@ public class Picture extends JPanel {
     // Resets the node when it is no longer active.
     public void clearActiveNode(){
         if (activeNode != null) {
+
+            //reset the boundaries around the moved point
+            for(int x = activeNode.getX()-1; x <= activeNode.getX()+1; x++) {
+                for (int y = activeNode.getY()-1; y <= activeNode.getY()+1; y++) {
+                    if(x > 0 && x <= cols && y > 0 && y <= rows) {
+                        int[] pointsX = {points[x-1][y-1].getImgX(), points[x][y-1].getImgX(), points[x+1][y].getImgX(), points[x+1][y+1].getImgX(), points[x][y+1].getImgX(), points[x-1][y].getImgX()};
+                        int[] pointsY = {points[x-1][y-1].getImgY(), points[x][y-1].getImgY(), points[x+1][y].getImgY(), points[x+1][y+1].getImgY(), points[x][y+1].getImgY(), points[x-1][y].getImgY()};
+                        points[x][y].resetBounds(pointsX, pointsY);
+                    }
+                }
+            }
+            
+            //clear the activeNode
             changeNodeColor(activeNode, Color.BLACK);
             activeNode = null;
         }
+    }
+
+    public void movePoint(int posX, int posY){
+        if(activeNode.withinBounds(posX, posY)) {
+            System.out.println(true);
+            activeNode.setImgX(posX);
+            activeNode.setImgY(posY);
+            repaint();
+        }else{System.out.println(false);}
     }
 }//End class

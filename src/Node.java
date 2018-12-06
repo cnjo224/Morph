@@ -12,6 +12,7 @@ public class Node extends Polygon {
     private int x, y, imgX, imgY, cols, rows;
     private final int pictureWidth = 600, size = 5;
     private Color color;
+    private Polygon boundaryPoly;
 
     // Constructor: initializes the node based on its position in a 2D array and calculates its pixel position in a panel.
     public Node(int X, int Y, int Cols, int Rows){
@@ -50,8 +51,6 @@ public class Node extends Polygon {
     }
 
     public boolean contained(Point click) {
-        System.out.println("cx: " + click.x + "; xp[0]" + xpoints[0] + "; xp[1]" + xpoints[1]);
-        System.out.println("cy: " + click.y + "; yp[0]" + ypoints[0] + "; yp[2]" + ypoints[2]);
         if(click.x >= xpoints[0] && click.x <= xpoints[1] && click.y >= ypoints[0] && click.y <= ypoints[2]){
             return true;
         }
@@ -73,4 +72,18 @@ public class Node extends Polygon {
 
     public int getSize(){return size;}
 
+    public void resetBounds(int[] pointsX, int[] pointsY){
+        boundaryPoly = new Polygon(pointsX, pointsY, 6);
+    }
+
+    public boolean withinBounds(int posX, int posY){
+        if(boundaryPoly.contains(posX, posY)){
+            return true;
+        }
+        return false;
+    }
+
+    public Polygon getBoundaryPoly() {
+        return boundaryPoly;
+    }
 }//End class

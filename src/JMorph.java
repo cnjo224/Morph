@@ -49,11 +49,19 @@ public class JMorph extends JFrame {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
                     if(e.getX() >=0 && e.getX() < startView.getWidth() && e.getY() >=0 && e.getY() < startView.getHeight()) {
+
+                        startView.movePoint(e.getX(), e.getY());
+
+
+
+
+
+                        /*
                         Node nd = startView.getActiveNode();
                         //Node endND = endView.getPoints()[nd.getX()][nd.getY()];
                         //endView.setActiveNode(endND);
                         nd.setImgX(e.getX());
-                        nd.setImgY(e.getY());
+                        nd.setImgY(e.getY());*/
                         startView.repaint();
                     }
                 }
