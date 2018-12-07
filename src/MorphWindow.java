@@ -162,9 +162,10 @@ public class MorphWindow extends JFrame {
                 morph.getPoints()[i][j].setImgY((int) y);
             }
         }
-        Picture morphCopy = new Picture(morph.getBim(), morph.getPoints());
-        BufferedImage startingTriangles = setTiangles(start, morphCopy);
-        BufferedImage endingTriangles = setTiangles(end, morphCopy);
+        Picture morphCopy1 = new Picture(morph.getBim(), morph.getPoints());
+        Picture morphCopy2 = new Picture(morph.getBim(), morph.getPoints());
+        BufferedImage startingTriangles = setTiangles(start, morphCopy1);
+        BufferedImage endingTriangles = setTiangles(end, morphCopy2);
         // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
         // difference of source and destination images and applying it to the tween. Pass int from setRGB into
         // color constructor to know what to do with the integer from getRGB
