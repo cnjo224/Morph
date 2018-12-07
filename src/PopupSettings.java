@@ -6,16 +6,15 @@
  */
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class PopupSettings extends JFrame {
     private int tweenImagesDefault = 30, previewSecondsDefault = 2;
     private int gridSizeValue=10, tweenImageValue=30, previewSeconds = 2, startBChange = 50, endBchange = 50;
-    private boolean applyHit = false;
+    public boolean applyHit = false;
 
     //These must be global to ensure access within event listeners
     private JSpinner tweenImages, secondsSelect;
@@ -33,17 +32,17 @@ public class PopupSettings extends JFrame {
                     getGridSize("value");
                     tweenImageValue = (Integer)tweenImages.getValue();
                     previewSeconds = (Integer)secondsSelect.getValue();
-                    startBChange = startBrightness.getValue();
-                    endBchange = endBrightness.getValue();
-                    applyHit = false;
                 }else{
                     //if apply wasn't hit, then reset the spinners to previously applied values
                     getGridSize("index");
                     tweenImages.setValue(tweenImageValue);
                     secondsSelect.setValue(previewSeconds);
-                    startBrightness.setValue(100);
-                    endBrightness.setValue(100);
                 }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent windowEvent){
+                System.out.println("Window closed");
             }
         });
 
@@ -74,6 +73,12 @@ public class PopupSettings extends JFrame {
         startBrightness.setPaintTicks(true);
         startBrightness.setSnapToTicks(true);
         startBrightness.setPaintLabels(true);
+        startBrightness.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                startBChange = startBrightness.getValue();
+            }
+        });
 
         JLabel endBrightLab = new JLabel("Ending Image Brightness");
         endBrightness = new JSlider(JSlider.HORIZONTAL, 0, 200, 100);
@@ -82,6 +87,12 @@ public class PopupSettings extends JFrame {
         endBrightness.setPaintTicks(true);
         endBrightness.setSnapToTicks(true);
         endBrightness.setPaintLabels(true);
+        endBrightness.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent changeEvent) {
+                endBchange = endBrightness.getValue();
+            }
+        });
 
         //When apply is clicked, the settings are saved, otherwise they're discarded when the window closes
         JButton applyButton = new JButton("Apply");
@@ -148,7 +159,7 @@ public class PopupSettings extends JFrame {
     }//end getGridSize
 
     //return set information
-    public int getGridSizeValue(){return gridSizeValue;} //Will use in Morph Part 2
+    public int getGridSizeValue(){return gridSizeValue;}
     public int getTweenImageValue(){return tweenImageValue;}
     public int getSeconds(){return previewSeconds;}
     public int getStartBChange() { return startBChange; }

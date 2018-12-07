@@ -26,7 +26,7 @@ public class Picture extends JPanel {
         this.cols = cols; // Number of columns that contain control points
         trueRow = rows+2; // Add 2 rows to create a grid with the right number of control points
         trueCol = cols+2; // Add 2 columns to create a grid with the right number of control points
-        points = new Node[trueRow][trueCol]; // 2D array of control points
+        points = new Node[20][20]; // 2D array of control points
         drawNodes = true;
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight())); // Size of the panel
         // Initialize the 2D array of control points
@@ -60,6 +60,33 @@ public class Picture extends JPanel {
         drawNodes = true;
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight()));
     }//End alternative constructor
+
+    public void changeGridSize(int size){
+        this.rows = size; // Number of rows that contain control points
+        this.cols = size; // Number of columns that contain control points
+        trueRow = rows+2; // Add 2 rows to create a grid with the right number of control points
+        trueCol = cols+2; // Add 2 columns to create a grid with the right number of control points
+        points = new Node[22][22]; // 2D array of control points
+        drawNodes = true;
+
+        // Initialize the 2D array of control points
+        for (int i = 0; i < trueCol; i++) {
+            for (int j = 0; j < trueRow; j++) {
+                points[i][j] = new Node(i, j, trueCol, trueRow, bim.getWidth(), bim.getHeight());
+            }
+        }
+
+        //Initialize the boundary for each control point
+        //the Outside points don't need set because they never move
+        for(int x = 1; x <= this.cols; x++){
+            for(int y = 1; y <= this.rows; y++){
+                int[] pointsX = {points[x-1][y-1].getImgX(), points[x][y-1].getImgX(), points[x+1][y].getImgX(), points[x+1][y+1].getImgX(), points[x][y+1].getImgX(), points[x-1][y].getImgX()};
+                int[] pointsY = {points[x-1][y-1].getImgY(), points[x][y-1].getImgY(), points[x+1][y].getImgY(), points[x+1][y+1].getImgY(), points[x][y+1].getImgY(), points[x-1][y].getImgY()};
+                points[x][y].resetBounds(pointsX, pointsY);
+            }
+        }
+        repaint();
+    }
 
     public BufferedImage copyImage(BufferedImage bim){
         ColorModel m = bim.getColorModel();
@@ -103,6 +130,9 @@ public class Picture extends JPanel {
     public void changeNodeColor(Node n, Color color) { n.setColor(color); }
 
     public BufferedImage changeBrightness(int changeVal) {
+
+        if(changeVal == 100){return bim;}
+
         int pixel[] = {0,0,0,0};
         float hsbValues[] = {0.0f, 0.0f, 0.0f},  percent = changeVal/100;
         Color brightAdjust;
@@ -181,8 +211,8 @@ public class Picture extends JPanel {
 
     // Identify if there is a click on a control point and activate it.
     public boolean clickInPoint(Point click){
-        for(int i =0; i < points.length; i++){
-            for(int j=0; j< points.length; j++){
+        for(int i =0; i < trueCol; i++){
+            for(int j=0; j< trueRow; j++){
                 if(points[i][j].contained(click) && i != 0 && i != trueCol-1 && j != 0 && j != trueRow-1){
                     activeNode = points[i][j];
                     return true;

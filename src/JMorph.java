@@ -142,11 +142,21 @@ public class JMorph extends JFrame {
                 settings.setVisible(true);
                 settings.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent windowEvent) {
-                        System.out.println("Settings Closed");
+                        System.out.println(settings.applyHit);
                         //call member functions of settings page here
                         // TODO: Add change listener to brightness
-                        image = startView.changeBrightness(settings.getStartBChange());
-                        image2 = endView.changeBrightness(settings.getEndBchange());
+                        if(settings.applyHit) {
+                            if(settings.getGridSizeValue() != rows){
+                                rows = settings.getGridSizeValue();
+                                columns = settings.getGridSizeValue();
+                                startView.changeGridSize(rows);
+                                endView.changeGridSize(rows);
+                            }
+
+                            image = startView.changeBrightness(settings.getStartBChange());
+                            image2 = endView.changeBrightness(settings.getEndBchange());
+                        }
+                        settings.applyHit = false;
                     }
                 });
             }
