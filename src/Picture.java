@@ -13,7 +13,7 @@ import java.awt.image.WritableRaster;
 
 public class Picture extends JPanel {
     private int rows, cols, trueRow, trueCol;
-    private boolean drawNodes = true;
+    private boolean drawNodes;
     private BufferedImage original, bim;
     private Node points[][];
     private Node activeNode;
@@ -27,6 +27,7 @@ public class Picture extends JPanel {
         trueRow = rows+2; // Add 2 rows to create a grid with the right number of control points
         trueCol = cols+2; // Add 2 columns to create a grid with the right number of control points
         points = new Node[trueRow][trueCol]; // 2D array of control points
+        drawNodes = true;
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight())); // Size of the panel
         // Initialize the 2D array of control points
         for (int i = 0; i < trueCol; i++) {
@@ -92,7 +93,8 @@ public class Picture extends JPanel {
     // Get a specific point (for easy coordinate access)
     public Node getPoint(int x, int y) { return points[x][y]; }
 
-    public BufferedImage getPicture() { return bim; }
+    public BufferedImage getBim() { return bim; }
+    public void setBim(BufferedImage bim) { this.bim = bim; }
 
     public void ignoreGrid() { drawNodes = false; }
 
@@ -100,8 +102,8 @@ public class Picture extends JPanel {
     public void changeNodeColor(Node n, Color color) { n.setColor(color); }
 
     public void changeBrightness(int changeVal) {
-        int percent = changeVal/100, pixel[] = {0,0,0,0};
-        float[] hsbValues= {0.0f, 0.0f, 0.0f};
+        int pixel[] = {0,0,0,0};
+        float hsbValues[] = {0.0f, 0.0f, 0.0f},  percent = changeVal/100;
         Color brightAdjust;
 
         if (bim == null)
@@ -113,14 +115,14 @@ public class Picture extends JPanel {
                 Color.RGBtoHSB(pixel[0], pixel[1], pixel[2], hsbValues);
 
                 float newBright = hsbValues[2] * percent;
-                //if(newBright > 1f){ newBright = 1f;}
+                if(newBright > 1f){ newBright = 1f;}
 
                 brightAdjust = new Color(Color.HSBtoRGB(hsbValues[0], hsbValues[1], newBright));
                 int[] rgb = { brightAdjust.getRed(), brightAdjust.getGreen(), brightAdjust.getBlue(), pixel[3]};
                 bim.getRaster().setPixel(i, j, rgb);
             }
         }
-        //repaint();
+        repaint();
     }
 
     // Draw the connecting lines in between the control points

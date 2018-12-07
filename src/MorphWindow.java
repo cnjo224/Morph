@@ -7,11 +7,11 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 
 public class MorphWindow extends JFrame {
     private Picture start, end, morph;
-    private int r, c, currFrame, framesPerSecond, seconds, completedFrames;
+    private int r, c, currFrame, framesPerSecond, seconds;
+    private float completedFrames;
     private Timer animate;
     private JMenuItem status; //because it's needed inside an event listener
 
@@ -140,8 +140,9 @@ public class MorphWindow extends JFrame {
     // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
     // the starting image to the position on the ending image.
     public void animation() {
-        completedFrames = currFrame / (framesPerSecond * seconds);
-        int x, y, x1, x2, y1, y2, tweenImageR, tweenImageG, tweenImageB, tweenImageAlp;
+        completedFrames = (float)(currFrame) / (framesPerSecond * seconds);
+        float x, y;
+        int x1, x2, y1, y2, tweenImageR, tweenImageG, tweenImageB, tweenImageAlp;
         Color currColor, endColor, tweenColor;
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < r; j++) {
@@ -154,30 +155,33 @@ public class MorphWindow extends JFrame {
                 y = ((y2 - y1) * completedFrames) + y1;
 
                 // Change the coordinates of x and y of the start panel
-                morph.getPoints()[i][j].setImgX(x);
-                morph.getPoints()[i][j].setImgY(y);
+                morph.getPoints()[i][j].setImgX((int)x);
+                morph.getPoints()[i][j].setImgY((int)y);
             }
         }
         setTiangles();
         // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
         // difference of source and destination images and applying it to the tween. Pass int from setRGB into
         // color constructor to know what to do with the integer from getRGB
-
-        for (int i = 0; i < morph.getPicture().getWidth(); i++) {
-            for (int j = 0; j < morph.getPicture().getHeight(); j++) {
-                currColor = new Color(morph.getPicture().getRGB(i, j));
-                endColor = new Color(end.getPicture().getRGB(i, j));
+        BufferedImage frame = new BufferedImage(morph.getBim().getWidth(), morph.getBim().getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < morph.getBim().getWidth(); i++) {
+            for (int j = 0; j < morph.getBim().getHeight(); j++) {
+                currColor = new Color(morph.getBim().getRGB(i, j));
+                endColor = new Color(end.getBim().getRGB(i, j));
                 // cross dissolve formula
-                tweenImageR = currColor.getRed() + completedFrames * (endColor.getRed() - currColor.getRed());
-                tweenImageG = currColor.getGreen() + completedFrames * (endColor.getGreen() - currColor.getGreen());
-                tweenImageB = currColor.getBlue() + completedFrames * (endColor.getBlue() - currColor.getBlue());
-                tweenImageAlp = currColor.getAlpha() + completedFrames * (endColor.getAlpha() - currColor.getAlpha());
+                tweenImageR = (int)(currColor.getRed() + completedFrames * (endColor.getRed() - currColor.getRed()));
+                tweenImageG = (int)(currColor.getGreen() + completedFrames * (endColor.getGreen() - currColor.getGreen()));
+                tweenImageB = (int)(currColor.getBlue() + completedFrames * (endColor.getBlue() - currColor.getBlue()));
+                tweenImageAlp = (int)(currColor.getAlpha() + completedFrames * (endColor.getAlpha() - currColor.getAlpha()));
 
                 tweenColor = new Color(tweenImageR, tweenImageG, tweenImageB, tweenImageAlp);
-                morph.getPicture().setRGB(i, j, tweenColor.getRGB());
+                frame.setRGB(i, j, tweenColor.getRGB());
+
             } // TODO: check why the intensities are not blending and then do the morph
         }
+        morph.setBim(frame);
         currFrame++; // Increase the number of frames rendered
+        morph.ignoreGrid();
         morph.repaint(); //repaint each frame
     } //End animation()
 
@@ -217,11 +221,11 @@ public class MorphWindow extends JFrame {
 
                     Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx4, sy4);
                     Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx4, dy4);
-                    warpTriangle(morph.getPicture(), end.getPicture(), S, D, null, null);
+                    warpTriangle(morph.getBim(), end.getBim(), S, D, null, null);
 
                     S = new Triangle(sx1, sy1, sx3, sy3, sx4, sy4);
                     D = new Triangle(dx1, dy1, dx3, dy3, dx4, dy4);
-                    warpTriangle(morph.getPicture(), end.getPicture(), S, D, null, null);
+                    warpTriangle(morph.getBim(), end.getBim(), S, D, null, null);
                 }
             }
         }
