@@ -13,13 +13,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class PopupSettings extends JFrame {
-    private int gridSizeDefault = 10, tweenImagesDefault = 30, previewSecondsDefault = 2;
+    private int tweenImagesDefault = 30, previewSecondsDefault = 2;
     private int gridSizeValue=10, tweenImageValue=30, previewSeconds = 2, startBChange = 50, endBchange = 50;
     private boolean applyHit = false;
 
     //These must be global to ensure access within event listeners
-    private JSpinner gridSize, tweenImages, secondsSelect;
+    private JSpinner tweenImages, secondsSelect;
     private JSlider startBrightness, endBrightness;
+    private JComboBox gridSize;
 
     public PopupSettings(){
         super("Settings");
@@ -29,7 +30,7 @@ public class PopupSettings extends JFrame {
             public void windowClosing(WindowEvent windowEvent) {
                 //if apply was hit, set the accessible values
                 if(applyHit){
-                    gridSizeValue = (Integer)gridSize.getValue();
+                    getGridSize("value");
                     tweenImageValue = (Integer)tweenImages.getValue();
                     previewSeconds = (Integer)secondsSelect.getValue();
                     startBChange = startBrightness.getValue();
@@ -37,11 +38,11 @@ public class PopupSettings extends JFrame {
                     applyHit = false;
                 }else{
                     //if apply wasn't hit, then reset the spinners to previously applied values
-                    gridSize.setValue(gridSizeValue);
+                    getGridSize("index");
                     tweenImages.setValue(tweenImageValue);
                     secondsSelect.setValue(previewSeconds);
-                    startBrightness.setValue(50);
-                    endBrightness.setValue(50);
+                    startBrightness.setValue(100);
+                    endBrightness.setValue(100);
                 }
             }
         });
@@ -49,9 +50,11 @@ public class PopupSettings extends JFrame {
         JLabel gridSizeLabel = new JLabel("Grid Size: ");
 
         //length of one size of the grid. Must be square grid size
-        SpinnerModel gridModel = new SpinnerNumberModel(gridSizeDefault, 10, 10, 1);
-        gridSize = new JSpinner(gridModel);
-        gridSize.setEnabled(false); //Currently only works on 10x10 grid (+2 for non-movable control points)
+        gridSize = new JComboBox();
+        gridSize.addItem("5 x 5");
+        gridSize.addItem("10 x 10");
+        gridSize.addItem("20 x 20");
+        gridSize.setSelectedIndex(1);
 
         JLabel tweenImagesLabel = new JLabel("Frames Per Second: ");
 
@@ -65,10 +68,20 @@ public class PopupSettings extends JFrame {
         secondsSelect = new JSpinner(secModel);
 
         JLabel startBrightLab = new JLabel("Starting Image Brightness");
-        startBrightness = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        startBrightness = new JSlider(JSlider.HORIZONTAL, 0, 200, 100);
+        startBrightness.setMajorTickSpacing(50);
+        startBrightness.setMinorTickSpacing(25);
+        startBrightness.setPaintTicks(true);
+        startBrightness.setSnapToTicks(true);
+        startBrightness.setPaintLabels(true);
 
         JLabel endBrightLab = new JLabel("Ending Image Brightness");
-        endBrightness = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        endBrightness = new JSlider(JSlider.HORIZONTAL, 0, 200, 100);
+        endBrightness.setMajorTickSpacing(50);
+        endBrightness.setMinorTickSpacing(25);
+        endBrightness.setPaintTicks(true);
+        endBrightness.setSnapToTicks(true);
+        endBrightness.setPaintLabels(true);
 
         //When apply is clicked, the settings are saved, otherwise they're discarded when the window closes
         JButton applyButton = new JButton("Apply");
@@ -82,7 +95,7 @@ public class PopupSettings extends JFrame {
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                gridSize.setValue(gridSizeDefault);
+                gridSize.setSelectedIndex(1);
                 tweenImages.setValue(tweenImagesDefault);
                 secondsSelect.setValue(previewSecondsDefault);
             }
@@ -104,9 +117,35 @@ public class PopupSettings extends JFrame {
 
         //Format and visualize JFrame
         setLayout(new GridLayout(6,2, 10, 10));
-        setSize(400,250);
+        setSize(400,350);
         setResizable(false);
     }//end constructor
+
+    private void getGridSize(String flag){
+        if(flag == "value") {
+            switch (gridSize.getSelectedIndex()) {
+                case 0:
+                    gridSizeValue = 5;
+                    break;
+                case 1:
+                    gridSizeValue = 10;
+                    break;
+                case 2:
+                    gridSizeValue = 20;
+            }//end switch
+        }else{
+            switch (gridSizeValue){
+                case 5:
+                    gridSize.setSelectedIndex(0);
+                    break;
+                case 10:
+                    gridSize.setSelectedIndex(1);
+                    break;
+                case 20:
+                    gridSize.setSelectedIndex(2);
+            }
+        }
+    }//end getGridSize
 
     //return set information
     public int getGridSizeValue(){return gridSizeValue;} //Will use in Morph Part 2
