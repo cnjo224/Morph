@@ -1,3 +1,4 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,6 +8,8 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class MorphWindow extends JFrame {
     private Picture start, end, morph;
@@ -25,8 +28,8 @@ public class MorphWindow extends JFrame {
         Node[][] endPoints = new Node[c][r];
 
         // Populate the copy of the array with new Node objects native to the PreviewWindow class only
-        for(int i = 0; i < c; i++){
-            for(int j = 0; j < r; j++){
+        for (int i = 0; i < c; i++) {
+            for (int j = 0; j < r; j++) {
                 Node nd = new Node(initPoints[i][j].getX(), initPoints[i][j].getY(), c, r, startImage.getWidth(), startImage.getHeight());
                 nd.setImgX(initPoints[i][j].getImgX());
                 nd.setImgY(initPoints[i][j].getImgY());
@@ -49,10 +52,10 @@ public class MorphWindow extends JFrame {
         addMenus(settings);
         framesPerSecond = settings.getTweenImageValue(); // Retrieve the values from the settings window
         seconds = settings.getSeconds();
-        animate = new Timer(seconds*10, new ActionListener() { // Timer to allow the animation to be visible
+        animate = new Timer(seconds * 10, new ActionListener() { // Timer to allow the animation to be visible
             public void actionPerformed(ActionEvent e) {
                 animation();
-                if (currFrame > seconds*framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
+                if (currFrame > seconds * framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
                     animate.stop();
                     currFrame = 1; // Reset the number of frames for future use
                     status.setText("Status: Finished");
@@ -62,11 +65,11 @@ public class MorphWindow extends JFrame {
         //animate.start();
         //add the Picture panel to the JFrame
         add(morph);
-        setSize(650,675);
+        setSize(650, 675);
         setVisible(true);
     }
 
-    private void addMenus(PopupSettings settings){
+    private void addMenus(PopupSettings settings) {
         //Initialize the menuBar
 
         //Export will produce a savable video (Disabled until Morph Part2)
@@ -140,7 +143,7 @@ public class MorphWindow extends JFrame {
     // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
     // the starting image to the position on the ending image.
     public void animation() {
-        completedFrames = (float)(currFrame) / (framesPerSecond * seconds);
+        completedFrames = (float) (currFrame) / (framesPerSecond * seconds);
         float x, y;
         int x1, x2, y1, y2, tweenImageR, tweenImageG, tweenImageB, tweenImageAlp;
         Color currColor, endColor, tweenColor;
@@ -155,31 +158,40 @@ public class MorphWindow extends JFrame {
                 y = ((y2 - y1) * completedFrames) + y1;
 
                 // Change the coordinates of x and y of the start panel
-                morph.getPoints()[i][j].setImgX((int)x);
-                morph.getPoints()[i][j].setImgY((int)y);
+                morph.getPoints()[i][j].setImgX((int) x);
+                morph.getPoints()[i][j].setImgY((int) y);
             }
         }
-        setTiangles();
+        Picture morphCopy = new Picture(morph.getBim(), morph.getPoints());
+        BufferedImage startingTriangles = setTiangles(start, morphCopy);
+        BufferedImage endingTriangles = setTiangles(end, morphCopy);
         // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
         // difference of source and destination images and applying it to the tween. Pass int from setRGB into
         // color constructor to know what to do with the integer from getRGB
         BufferedImage frame = new BufferedImage(morph.getBim().getWidth(), morph.getBim().getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < morph.getBim().getWidth(); i++) {
-            for (int j = 0; j < morph.getBim().getHeight(); j++) {
-                currColor = new Color(morph.getBim().getRGB(i, j));
-                endColor = new Color(end.getBim().getRGB(i, j));
+        for (int i = 0; i < startingTriangles.getWidth(); i++) {
+            for (int j = 0; j < startingTriangles.getHeight(); j++) {
+                currColor = new Color(startingTriangles.getRGB(i, j));
+                endColor = new Color(endingTriangles.getRGB(i, j));
                 // cross dissolve formula
-                tweenImageR = (int)(currColor.getRed() + completedFrames * (endColor.getRed() - currColor.getRed()));
-                tweenImageG = (int)(currColor.getGreen() + completedFrames * (endColor.getGreen() - currColor.getGreen()));
-                tweenImageB = (int)(currColor.getBlue() + completedFrames * (endColor.getBlue() - currColor.getBlue()));
-                tweenImageAlp = (int)(currColor.getAlpha() + completedFrames * (endColor.getAlpha() - currColor.getAlpha()));
+                tweenImageR = (int) (currColor.getRed() + completedFrames * (endColor.getRed() - currColor.getRed()));
+                tweenImageG = (int) (currColor.getGreen() + completedFrames * (endColor.getGreen() - currColor.getGreen()));
+                tweenImageB = (int) (currColor.getBlue() + completedFrames * (endColor.getBlue() - currColor.getBlue()));
+                tweenImageAlp = (int) (currColor.getAlpha() + completedFrames * (endColor.getAlpha() - currColor.getAlpha()));
 
                 tweenColor = new Color(tweenImageR, tweenImageG, tweenImageB, tweenImageAlp);
                 frame.setRGB(i, j, tweenColor.getRGB());
-
-            } // TODO: check why the intensities are not blending and then do the morph
+            }
         }
         morph.setBim(frame);
+
+        File outputFile = new File("MOJ" + currFrame + ".jpg");
+        try {
+            ImageIO.write(frame, "jpg", outputFile);
+        } catch (IOException e) {
+            System.out.println("Error Saving Morph Frame");
+        }
+
         currFrame++; // Increase the number of frames rendered
         morph.ignoreGrid();
         morph.repaint(); //repaint each frame
@@ -192,57 +204,80 @@ public class MorphWindow extends JFrame {
      */
 
 
-
-    public void setTiangles() {
-        int sx1, sx2, sx3, sx4, dx1, dx2, dx3, dx4;
-        int sy1, sy2, sy3, sy4, dy1, dy2, dy3, dy4;
-        for (int i = 0; i < c-1; i++) {
-            for (int j = 0; j < r-1; j++) {
+    public BufferedImage setTiangles(Picture first, Picture last) {
+        double sx1, sx2, sx3, sx4, dx1, dx2, dx3, dx4;
+        double sy1, sy2, sy3, sy4, dy1, dy2, dy3, dy4;
+        for (int i = 0; i < c - 1; i++) {
+            for (int j = 0; j < r - 1; j++) {
                 if (i + 1 <= c || j + 1 <= r) {
                     // Source triangle (S) points
-                    sx1 = start.getPoint(i, j).getImgX();
-                    sy1 = start.getPoint(i, j).getImgY();
-                    sx2 = start.getPoint(i + 1, j).getImgX();
-                    sy2 = start.getPoint(i + 1, j).getImgY();
-                    sx3 = start.getPoint(i, j + 1).getImgX();
-                    sy3 = start.getPoint(i, j + 1).getImgY();
-                    sx4 = start.getPoint(i + 1, j + 1).getImgX();
-                    sy4 = start.getPoint(i + 1, j + 1).getImgY();
+                    /*sx1 = morph.getPoint(i, j).getX();
+                    sy1 = morph.getPoint(i, j).getY();
+                    sx2 = morph.getPoint(i + 1, j).getX();
+
+                    sy2 = morph.getPoint(i + 1, j).getY();
+                    sx3 = morph.getPoint(i, j + 1).getX();
+                    sy3 = morph.getPoint(i, j + 1).getY();
+                    sx4 = morph.getPoint(i + 1, j + 1).getX();
+                    sy4 = morph.getPoint(i + 1, j + 1).getY();*/
+                    sx1 = first.getPoint(i, j).getImgX();
+                    sy1 = first.getPoint(i, j).getImgY();
+                    sx2 = first.getPoint(i + 1, j).getImgX();
+                    sy2 = first.getPoint(i + 1, j).getImgY();
+                    sx3 = first.getPoint(i+1, j + 1).getImgX();
+                    sy3 = first.getPoint(i+1, j + 1).getImgY();
+                    sx4 = first.getPoint(i, j + 1).getImgX();
+                    sy4 = first.getPoint(i, j + 1).getImgY();
 
                     // Destination triangle (D) points
-                    dx1 = morph.getPoint(i, j).getImgX();
-                    dy1 = morph.getPoint(i, j).getImgY();
-                    dx2 = morph.getPoint(i + 1, j).getImgX();
-                    dy2 = morph.getPoint(i + 1, j).getImgY();
-                    dx3 = morph.getPoint(i, j + 1).getImgX();
-                    dy3 = morph.getPoint(i, j + 1).getImgY();
-                    dx4 = morph.getPoint(i + 1, j + 1).getImgX();
-                    dy4 = morph.getPoint(i + 1, j + 1).getImgY();
+                    /*dx1 = end.getPoint(i, j).getX();
+                    dy1 = end.getPoint(i, j).getY();
+                    dx2 = end.getPoint(i + 1, j).getX();
+                    dy2 = end.getPoint(i + 1, j).getY();
+                    dx3 = end.getPoint(i, j + 1).getX();
+                    dy3 = end.getPoint(i, j + 1).getY();
+                    dx4 = end.getPoint(i + 1, j + 1).getX();
+                    dy4 = end.getPoint(i + 1, j + 1).getY();*/
+                    dx1 = last.getPoint(i, j).getImgX();
+                    dy1 = last.getPoint(i, j).getImgY();
+                    dx2 = last.getPoint(i + 1, j).getImgY();
+                    dy2 = last.getPoint(i + 1, j).getImgY();
+                    dx3 = last.getPoint(i+1, j + 1).getImgX();
+                    dy3 = last.getPoint(i+1, j + 1).getImgY();
+                    dx4 = last.getPoint(i , j + 1).getImgX();
+                    dy4 = last.getPoint(i, j + 1).getImgY();
 
-                    Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx4, sy4);
-                    Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx4, dy4);
-                    warpTriangle(morph.getBim(), end.getBim(), S, D, null, null);
+                    Triangle S = new Triangle(sx1, sy1, sx2, sy2, sx3, sy3);
+                    Triangle D = new Triangle(dx1, dy1, dx2, dy2, dx3, dy3);
+                    warpTriangle(first.getBim(), last.getBim(), S, D, null, null);
 
-                    S = new Triangle(sx1, sy1, sx3, sy3, sx4, sy4);
-                    D = new Triangle(dx1, dy1, dx3, dy3, dx4, dy4);
-                    warpTriangle(morph.getBim(), end.getBim(), S, D, null, null);
+                    S = new Triangle(sx1, sy1, sx4, sy4, sx3, sy3);
+                    D = new Triangle(dx1, dy1, dx4, dy4, dx3, dy3);
+                    warpTriangle(first.getBim(), last.getBim(), S, D, null, null);
                 }
             }
         }
+        return last.getBim();
     }
 
-    /*****************************************************
-     solve Xi = sx*xi + shx*yi + tx    for i = 1,2,3 where xi is a point on
-     the source triangle and Xi = the corresponding point on the
-     destination  triangle. Do the same thing for Yi = shy*y + sy*x + ty.
-     shx is the shearing of x and sx is the scaling of x and tx is the
-     translation of x needed to map one triangle to the other.
-     r
-     Gaussian Elimination with scaled partial pivoting is the method
-     used solve the two systems of linear equations.
-     ********************************************************/
-    public static void warpTriangle(BufferedImage src, BufferedImage dest, Triangle S, Triangle D, Object ALIASING, Object INTERPOLATION) {
+    public static void warpTriangle(
+            BufferedImage src,
+            BufferedImage dest,
+            Triangle S,
+            Triangle D,
+            Object ALIASING,
+            Object INTERPOLATION) {
 
+        /*****************************************************
+         solve Xi = sx*xi + shx*yi + tx    for i = 1,2,3 where xi is a point on
+         the source triangle and Xi = the corresponding point on the
+         destination  triangle. Do the same thing for Yi = shy*y + sy*x + ty.
+         shx is the shearing of x and sx is the scaling of x and tx is the
+         translation of x needed to map one triangle to the other.
+         r
+         Gaussian Elimination with scaled partial pivoting is the method
+         used solve the two systems of linear equations.
+         ********************************************************/
         if (ALIASING == null)
             ALIASING = RenderingHints.VALUE_ANTIALIAS_ON;
         if (INTERPOLATION == null)
@@ -279,17 +314,19 @@ public class MorphWindow extends JFrame {
         // System.out.println("Affine:\t" + x[0] + ", " + x[1] + ", " + x[2] );
         // System.out.println("\t" + y[0] + ", " + y[1] + ", " + y[2] );
 
-        AffineTransform af = new AffineTransform(x[0], y[0], x[1], y[1], x[2], y[2]);
+        AffineTransform af =
+                new AffineTransform(x[0], y[0], x[1], y[1], x[2], y[2]);
         GeneralPath destPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
 
-        destPath.moveTo((float)D.getX(0), (float)D.getY(0));
-        destPath.lineTo((float)D.getX(1), (float)D.getY(1));
-        destPath.lineTo((float)D.getX(2), (float)D.getY(2));
-        destPath.lineTo((float)D.getX(0), (float)D.getY(0));
+        destPath.moveTo((float) D.getX(0), (float) D.getY(0));
+        destPath.lineTo((float) D.getX(1), (float) D.getY(1));
+        destPath.lineTo((float) D.getX(2), (float) D.getY(2));
+        destPath.lineTo((float) D.getX(0), (float) D.getY(0));
         Graphics2D g2 = dest.createGraphics();
 
         // set up an alpha value for compositing as an example
-        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.5);
+        AlphaComposite ac =
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) 0.5);
         g2.setComposite(ac);
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, ALIASING);
@@ -318,7 +355,7 @@ public class MorphWindow extends JFrame {
             s[i] = smax;
         }
 
-        //i = n - 1;
+        i = n - 1;
         for (k = 0; k < (n - 1); ++k) {
             --j;
             rmax = 0;
@@ -342,7 +379,8 @@ public class MorphWindow extends JFrame {
         }
     }
 
-    private static void solve(int n, double[][] a, int[] l, double[] b, double[] x) {
+    private static void solve(
+            int n, double[][] a, int[] l, double[] b, double[] x) {
         /*********************************************************
          a and l have previously been passed to Gauss() b is the product of
          a and x. x is the 1x3 matrix of coefficients to solve for

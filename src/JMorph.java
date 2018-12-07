@@ -18,7 +18,7 @@ import java.io.*;
 
 public class JMorph extends JFrame {
     public PopupSettings settings = new PopupSettings();
-    private BufferedImage image = readImage("res/image1.png"), image2 = readImage("res/image2.png");
+    private BufferedImage image = readImage("res/gal.jpg"), image2 = readImage("res/lion.jpg");
     private Picture startView, endView;
     private int rows = 10, columns = 10;
     private Container c = getContentPane();
@@ -145,8 +145,8 @@ public class JMorph extends JFrame {
                         System.out.println("Settings Closed");
                         //call member functions of settings page here
                         // TODO: Add change listener to brightness
-                        startView.changeBrightness(settings.getStartBChange());
-                        endView.changeBrightness(settings.getEndBchange());
+                        image = startView.changeBrightness(settings.getStartBChange());
+                        image2 = endView.changeBrightness(settings.getEndBchange());
                     }
                 });
             }

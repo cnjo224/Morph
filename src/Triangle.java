@@ -6,12 +6,12 @@ public class Triangle
 
     private Point2D.Double tri[];
 
-    public Triangle(int x1, int y1, int x2, int y2, int x3, int y3)
+    public Triangle(double x1, double y1, double x2, double y2, double x3, double y3)
     {
         tri = new Point2D.Double[3];
-        tri[0] = new Point2D.Double((double)x1, (double)y1);
-        tri[1] = new Point2D.Double((double)x2, (double)y2);
-        tri[2] = new Point2D.Double((double)x3, (double)y3);
+        tri[0] = new Point2D.Double(x1,y1);
+        tri[1] = new Point2D.Double(x2, y2);
+        tri[2] = new Point2D.Double(x3, y3);
     }
 
     public Triangle(double[] coords)

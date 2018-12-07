@@ -51,12 +51,13 @@ public class Picture extends JPanel {
 
     // Constructor for the Picture class, takes in a 2D array of control points to modify it
     public Picture(BufferedImage bim, Node[][] tempPoints){
-        this.bim = bim;
+        this.bim = copyImage(bim);
         rows = tempPoints.length-2; // Retrieve the number of rows from the passed 2D array
         cols = tempPoints.length-2; // Retrieve the number of columns from the passed 2D array
         trueRow = rows+2; // Reset the number of true rows and columns (based on the desired number of control points)
         trueCol = cols+2;
         points = tempPoints; // Reset the control point array
+        drawNodes = true;
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight()));
     }//End alternative constructor
 
@@ -101,13 +102,13 @@ public class Picture extends JPanel {
     // Change the color of an individual node in the 2D array
     public void changeNodeColor(Node n, Color color) { n.setColor(color); }
 
-    public void changeBrightness(int changeVal) {
+    public BufferedImage changeBrightness(int changeVal) {
         int pixel[] = {0,0,0,0};
         float hsbValues[] = {0.0f, 0.0f, 0.0f},  percent = changeVal/100;
         Color brightAdjust;
 
         if (bim == null)
-            return;
+            return null;
 
         for (int i = 0; i < bim.getWidth(); i++){
             for (int j = 0; j < bim.getHeight(); j++) {
@@ -123,6 +124,7 @@ public class Picture extends JPanel {
             }
         }
         repaint();
+        return bim;
     }
 
     // Draw the connecting lines in between the control points
