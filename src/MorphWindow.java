@@ -7,21 +7,42 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
 
 public class MorphWindow extends JFrame {
     private Picture start, end, morph;
     private int r, c, currFrame, framesPerSecond, seconds, completedFrames;
-    private Container C = getContentPane();
     private Timer animate;
     private JMenuItem status; //because it's needed inside an event listener
 
-    public MorphWindow(PopupSettings settings, Picture start, Picture end) {
+    public MorphWindow(PopupSettings settings, BufferedImage startImage, Node[][] initPoints, BufferedImage endImage, Node[][] finPoints) {
         super("Morph");
-        this.start = start;
-        this.end = end;
-        r = start.getPoints().length;
-        c = start.getPoints()[0].length;
-        morph = new Picture(start.getPicture(), start.getPoints());
+        r = initPoints.length;
+        c = initPoints[0].length;
+
+        // Initialize a new array to store a copy of the original array.
+        Node[][] startPoints = new Node[c][r];
+        Node[][] endPoints = new Node[c][r];
+
+        // Populate the copy of the array with new Node objects native to the PreviewWindow class only
+        for(int i = 0; i < c; i++){
+            for(int j = 0; j < r; j++){
+                Node nd = new Node(initPoints[i][j].getX(), initPoints[i][j].getY(), c, r, startImage.getWidth(), startImage.getHeight());
+                nd.setImgX(initPoints[i][j].getImgX());
+                nd.setImgY(initPoints[i][j].getImgY());
+                startPoints[i][j] = nd;
+
+                Node nd2 = new Node(finPoints[i][j].getX(), finPoints[i][j].getY(), c, r, endImage.getWidth(), endImage.getHeight());
+                nd2.setImgX(finPoints[i][j].getImgX());
+                nd2.setImgY(finPoints[i][j].getImgY());
+                endPoints[i][j] = nd2;
+            }
+        }
+
+        start = new Picture(startImage, startPoints);
+        end = new Picture(endImage, endPoints);
+
+        morph = new Picture(startImage, startPoints);
         morph.ignoreGrid();
         morph.repaint();
 
@@ -40,7 +61,7 @@ public class MorphWindow extends JFrame {
         });
         //animate.start();
         //add the Picture panel to the JFrame
-        C.add(morph);
+        add(morph);
         setSize(650,675);
         setVisible(true);
     }
@@ -216,8 +237,7 @@ public class MorphWindow extends JFrame {
      Gaussian Elimination with scaled partial pivoting is the method
      used solve the two systems of linear equations.
      ********************************************************/
-    public static void warpTriangle(BufferedImage src, BufferedImage dest, Triangle S,
-                                    Triangle D, Object ALIASING, Object INTERPOLATION) {
+    public static void warpTriangle(BufferedImage src, BufferedImage dest, Triangle S, Triangle D, Object ALIASING, Object INTERPOLATION) {
 
         if (ALIASING == null)
             ALIASING = RenderingHints.VALUE_ANTIALIAS_ON;
@@ -255,8 +275,7 @@ public class MorphWindow extends JFrame {
         // System.out.println("Affine:\t" + x[0] + ", " + x[1] + ", " + x[2] );
         // System.out.println("\t" + y[0] + ", " + y[1] + ", " + y[2] );
 
-        AffineTransform af =
-                new AffineTransform(x[0], y[0], x[1], y[1], x[2], y[2]);
+        AffineTransform af = new AffineTransform(x[0], y[0], x[1], y[1], x[2], y[2]);
         GeneralPath destPath = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
 
         destPath.moveTo((float)D.getX(0), (float)D.getY(0));
@@ -266,8 +285,7 @@ public class MorphWindow extends JFrame {
         Graphics2D g2 = dest.createGraphics();
 
         // set up an alpha value for compositing as an example
-        AlphaComposite ac =
-                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.5);
+        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)0.5);
         g2.setComposite(ac);
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, ALIASING);
@@ -296,7 +314,7 @@ public class MorphWindow extends JFrame {
             s[i] = smax;
         }
 
-        i = n - 1;
+        //i = n - 1;
         for (k = 0; k < (n - 1); ++k) {
             --j;
             rmax = 0;
@@ -320,8 +338,7 @@ public class MorphWindow extends JFrame {
         }
     }
 
-    private static void solve(
-            int n, double[][] a, int[] l, double[] b, double[] x) {
+    private static void solve(int n, double[][] a, int[] l, double[] b, double[] x) {
         /*********************************************************
          a and l have previously been passed to Gauss() b is the product of
          a and x. x is the 1x3 matrix of coefficients to solve for

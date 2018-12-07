@@ -1,7 +1,8 @@
 /* Authors: Caitlin Jones, Chelina Ortiz M
  * Date: 11/16/18
  * Project: CS 335 Program 3 - Morph
- * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.)
+ * References: Previous projects from this semester (Rubber-banding, image processing, grid and node creation, etc.),
+ *      https://stackoverflow.com/questions/3514158/how-do-you-clone-a-bufferedimage
  * Notes: This class
  */
 
@@ -11,6 +12,8 @@ import java.awt.*;
 import java.awt.Image;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.io.*;
 
 public class JMorph extends JFrame {
@@ -174,7 +177,7 @@ public class JMorph extends JFrame {
         Morph.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Morph Page");
-                MorphWindow OpenMorph = new MorphWindow(settings, startView, endView);
+                MorphWindow OpenMorph = new MorphWindow(settings, copyImage(image), startView.getPoints(), copyImage(image2), endView.getPoints());
             }
         });
 
@@ -195,6 +198,12 @@ public class JMorph extends JFrame {
         menuBar.add(Reset);
     }//end createMenus function
 
+    public BufferedImage copyImage(BufferedImage init) {
+        ColorModel m = init.getColorModel();
+        boolean isAlphaPremultiplied = getColorModel().isAlphaPremultiplied();
+        WritableRaster raster = init.copyData(null);
+        return new BufferedImage(m, raster, isAlphaPremultiplied, null);
+    }
 
     public static void main(String[] args){
         JFrame main = new JMorph();

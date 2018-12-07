@@ -8,17 +8,20 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
 public class Picture extends JPanel {
     private int rows, cols, trueRow, trueCol;
     private boolean drawNodes = true;
-    private BufferedImage bim;
+    private BufferedImage original, bim;
     private Node points[][];
     private Node activeNode;
 
     // Default constructor for the Picture class, creates a panel that contains the image and the control points to morph.
     public Picture(BufferedImage bim, int rows, int cols) {
-        this.bim = bim; // Buffered Image in the panel
+        this.original = bim; // Buffered Image in the panel
+        this.bim = copyImage(bim);
         this.rows = rows; // Number of rows that contain control points
         this.cols = cols; // Number of columns that contain control points
         trueRow = rows+2; // Add 2 rows to create a grid with the right number of control points
@@ -31,7 +34,7 @@ public class Picture extends JPanel {
                 points[i][j] = new Node(i, j, trueCol, trueRow, bim.getWidth(), bim.getHeight());
             }
         }
-        System.out.println(rows + " " + cols);
+
         //Initialize the boundary for each control point
         //the Outside points don't need set because they never move
         for(int x = 1; x <= this.cols; x++){
@@ -55,6 +58,13 @@ public class Picture extends JPanel {
         points = tempPoints; // Reset the control point array
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight()));
     }//End alternative constructor
+
+    public BufferedImage copyImage(BufferedImage bim){
+        ColorModel m = bim.getColorModel();
+        boolean isAlphaPremultiplied = getColorModel().isAlphaPremultiplied();
+        WritableRaster raster = bim.copyData(null);
+        return new BufferedImage(m, raster, isAlphaPremultiplied, null);
+    }
 
     // Function to reset the 2D array to its default values
     public void resetPicture() {
@@ -98,15 +108,19 @@ public class Picture extends JPanel {
             return;
 
         for (int i = 0; i < bim.getWidth(); i++){
-            for (int j = 0; i < bim.getHeight(); j++) {
+            for (int j = 0; j < bim.getHeight(); j++) {
                 bim.getRaster().getPixel(i, j, pixel);
                 Color.RGBtoHSB(pixel[0], pixel[1], pixel[2], hsbValues);
-                brightAdjust = new Color(Color.HSBtoRGB(hsbValues[0], hsbValues[1], hsbValues[2] * percent));
+
+                float newBright = hsbValues[2] * percent;
+                //if(newBright > 1f){ newBright = 1f;}
+
+                brightAdjust = new Color(Color.HSBtoRGB(hsbValues[0], hsbValues[1], newBright));
                 int[] rgb = { brightAdjust.getRed(), brightAdjust.getGreen(), brightAdjust.getBlue(), pixel[3]};
                 bim.getRaster().setPixel(i, j, rgb);
             }
         }
-        repaint();
+        //repaint();
     }
 
     // Draw the connecting lines in between the control points
@@ -189,7 +203,6 @@ public class Picture extends JPanel {
     // Resets the node when it is no longer active.
     public void clearActiveNode(){
         if (activeNode != null) {
-
             //reset the boundaries around the moved point
             for(int x = activeNode.getX()-1; x <= activeNode.getX()+1; x++) {
                 for (int y = activeNode.getY()-1; y <= activeNode.getY()+1; y++) {
@@ -207,12 +220,14 @@ public class Picture extends JPanel {
         }
     }
 
+    //move the activeNode to new location (within boundary only)
     public void movePoint(int posX, int posY){
+        //if the dragging point is within the node's boundaryPoly, then repaint, otherwise, don't repaint
         if(activeNode.withinBounds(posX, posY)) {
-            System.out.println(true);
             activeNode.setImgX(posX);
             activeNode.setImgY(posY);
             repaint();
-        }else{System.out.println(false);}
-    }
+        }
+    }//End movePoint
+
 }//End class
