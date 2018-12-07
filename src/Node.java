@@ -9,21 +9,23 @@
 import java.awt.*;
 
 public class Node extends Polygon {
-    private int x, y, imgX, imgY, cols, rows;
-    private final int pictureWidth = 600, size = 5;
+    private int x, y, imgX, imgY, cols, rows, PictureWidth, PictureHeight;
+    private final int size = 5;
     private Color color;
     private Polygon boundaryPoly;
 
     // Constructor: initializes the node based on its position in a 2D array and calculates its pixel position in a panel.
-    public Node(int X, int Y, int Cols, int Rows){
+    public Node(int X, int Y, int Cols, int Rows, int pictureWidth, int pictureHeight){
         x = X; // X Position in the array (row)
         y = Y; // Y Position in the array (column)
         cols = Cols; // Columns in the 2D array
         rows = Rows; // Rows in the 2D array
+        PictureWidth = pictureWidth;
+        PictureHeight = pictureHeight;
         color = Color.BLACK; // Default node color
 
         imgX = x * Math.floorDiv(pictureWidth,cols-1); // X Position of the pixel in the pane/picture
-        imgY = y * Math.floorDiv(pictureWidth,rows-1); // Y Position of the pixel in the pane/picture
+        imgY = y * Math.floorDiv(pictureHeight,rows-1); // Y Position of the pixel in the pane/picture
 
         xpoints = new int[]{imgX - size, imgX + size, imgX + size, imgX - size}; // Points of the polygon object
         ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};
@@ -63,8 +65,8 @@ public class Node extends Polygon {
 
     // Resets node to default position in the image
     public void resetNode() {
-        imgX = x * Math.floorDiv(pictureWidth,cols-1);
-        imgY = y * Math.floorDiv(pictureWidth,rows-1);
+        imgX = x * Math.floorDiv(PictureWidth,cols-1);
+        imgY = y * Math.floorDiv(PictureHeight,rows-1);
 
         xpoints = new int[]{imgX - size, imgX + size, imgX + size, imgX - size};
         ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};

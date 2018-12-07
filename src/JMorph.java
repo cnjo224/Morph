@@ -15,7 +15,7 @@ import java.io.*;
 
 public class JMorph extends JFrame {
     public PopupSettings settings = new PopupSettings();
-    private BufferedImage image = readImage("res/boat.gif"), image2 = readImage("res/boatR.jpg");
+    private BufferedImage image = readImage("res/gal.jpg"), image2 = readImage("res/lion.jpg");
     private Picture startView, endView;
     private int rows = 10, columns = 10;
     private Container c = getContentPane();
@@ -40,7 +40,6 @@ public class JMorph extends JFrame {
                 isDragging = false;
                 startView.clearActiveNode();
                 endView.clearActiveNode();
-                endView.repaint();
             }
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
@@ -72,7 +71,6 @@ public class JMorph extends JFrame {
                 isDragging = false;
                 endView.clearActiveNode();
                 startView.clearActiveNode();
-                startView.repaint();
             }
             public void mouseEntered(MouseEvent e) {}
             public void mouseExited(MouseEvent e) {}
@@ -92,8 +90,8 @@ public class JMorph extends JFrame {
         c.add(startView, BorderLayout.WEST);
         c.add(endView, BorderLayout.EAST);
 
-        setSize(1220,655);
-        setResizable(false);
+        setSize(startView.getPicture().getWidth()+endView.getPicture().getWidth()+30,startView.getPicture().getHeight()+70);
+        //setResizable(false);
         setVisible(true);
     }
 
@@ -110,8 +108,8 @@ public class JMorph extends JFrame {
         try { tracker.waitForID (0); }
         catch (InterruptedException e) {}
         BufferedImage bim = new BufferedImage
-                (600, 600,
-                /*(image.getWidth(this), image.getHeight(this),*/
+
+                (image.getWidth(this), image.getHeight(this),
                         BufferedImage.TYPE_INT_RGB);
         Graphics2D big = bim.createGraphics();
         big.drawImage (image, 0, 0, this);
@@ -143,7 +141,10 @@ public class JMorph extends JFrame {
                     public void windowClosing(WindowEvent windowEvent) {
                         System.out.println("Settings Closed");
                         //call member functions of settings page here
-
+                        startView.changeBrightness(settings.getStartBChange());
+                        startView.repaint();
+                        endView.changeBrightness(settings.getEndBchange());
+                        endView.repaint();
                     }
                 });
             }

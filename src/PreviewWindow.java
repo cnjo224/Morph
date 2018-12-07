@@ -31,7 +31,7 @@ public class PreviewWindow extends JFrame {
         // Populate the copy of the array with new Node objects native to the PreviewWindow class only
         for(int i = 0; i < Start.length; i++){
             for(int j = 0; j < Start.length; j++){
-                Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), Start.length, Start.length);
+                Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), Start.length, Start.length, start.getPicture().getWidth(), start.getPicture().getHeight());
                 nd.setImgX(Start[i][j].getImgX());
                 nd.setImgY(Start[i][j].getImgY());
                 startP[i][j] = nd;

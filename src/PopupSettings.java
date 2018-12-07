@@ -14,11 +14,12 @@ import java.awt.event.WindowEvent;
 
 public class PopupSettings extends JFrame {
     private int gridSizeDefault = 10, tweenImagesDefault = 30, previewSecondsDefault = 2;
-    private int gridSizeValue=10, tweenImageValue=30, previewSeconds = 2;
+    private int gridSizeValue=10, tweenImageValue=30, previewSeconds = 2, startBChange = 50, endBchange = 50;
     private boolean applyHit = false;
 
     //These must be global to ensure access within event listeners
     private JSpinner gridSize, tweenImages, secondsSelect;
+    private JSlider startBrightness, endBrightness;
 
     public PopupSettings(){
         super("Settings");
@@ -31,12 +32,16 @@ public class PopupSettings extends JFrame {
                     gridSizeValue = (Integer)gridSize.getValue();
                     tweenImageValue = (Integer)tweenImages.getValue();
                     previewSeconds = (Integer)secondsSelect.getValue();
+                    startBChange = startBrightness.getValue();
+                    endBchange = endBrightness.getValue();
                     applyHit = false;
                 }else{
                     //if apply wasn't hit, then reset the spinners to previously applied values
                     gridSize.setValue(gridSizeValue);
                     tweenImages.setValue(tweenImageValue);
                     secondsSelect.setValue(previewSeconds);
+                    startBrightness.setValue(50);
+                    endBrightness.setValue(50);
                 }
             }
         });
@@ -58,6 +63,12 @@ public class PopupSettings extends JFrame {
 
         SpinnerModel secModel = new SpinnerNumberModel(previewSecondsDefault, 1, 10, 1);
         secondsSelect = new JSpinner(secModel);
+
+        JLabel startBrightLab = new JLabel("Starting Image Brightness");
+        startBrightness = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+
+        JLabel endBrightLab = new JLabel("Ending Image Brightness");
+        endBrightness = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
 
         //When apply is clicked, the settings are saved, otherwise they're discarded when the window closes
         JButton applyButton = new JButton("Apply");
@@ -84,12 +95,16 @@ public class PopupSettings extends JFrame {
         add(tweenImages);
         add(secondsLabel);
         add(secondsSelect);
+        add(startBrightLab);
+        add(startBrightness);
+        add(endBrightLab);
+        add(endBrightness);
         add(applyButton);
         add(resetButton);
 
         //Format and visualize JFrame
-        setLayout(new GridLayout(4,2, 10, 10));
-        setSize(400,175);
+        setLayout(new GridLayout(6,2, 10, 10));
+        setSize(400,250);
         setResizable(false);
     }//end constructor
 
@@ -97,5 +112,6 @@ public class PopupSettings extends JFrame {
     public int getGridSizeValue(){return gridSizeValue;} //Will use in Morph Part 2
     public int getTweenImageValue(){return tweenImageValue;}
     public int getSeconds(){return previewSeconds;}
-
+    public int getStartBChange() { return startBChange; }
+    public int getEndBchange() { return endBchange; }
 }//End class

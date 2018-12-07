@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 public class MorphWindow extends JFrame {
     private Picture start, end, morph;
-    private int r, c, currFrame, framesPerSecond, seconds;
+    private int r, c, currFrame, framesPerSecond, seconds, completedFrames;
     private Container C = getContentPane();
     private Timer animate;
     private JMenuItem status; //because it's needed inside an event listener
@@ -34,14 +34,14 @@ public class MorphWindow extends JFrame {
                 if (currFrame > seconds*framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
                     animate.stop();
                     currFrame = 1; // Reset the number of frames for future use
-                    //status.setText("Status: Finished");
+                    status.setText("Status: Finished");
                 }
             }
         });
         //animate.start();
         //add the Picture panel to the JFrame
         C.add(morph);
-        setSize(650,700);
+        setSize(650,675);
         setVisible(true);
     }
 
@@ -119,8 +119,9 @@ public class MorphWindow extends JFrame {
     // Animation: Will use linear transformation to compute the amount of pixels a control point needs to move to go from
     // the starting image to the position on the ending image.
     public void animation() {
-        int completed = currFrame / (framesPerSecond * seconds);
-        int x, y, x1, x2, y1, y2;
+        completedFrames = currFrame / (framesPerSecond * seconds);
+        int x, y, x1, x2, y1, y2, tweenImageR, tweenImageG, tweenImageB, tweenImageAlp;
+        Color currColor, endColor, tweenColor;
         for (int i = 0; i < c; i++) {
             for (int j = 0; j < r; j++) {
                 x1 = morph.getPoints()[i][j].getImgX(); // Get the x coordinate of the pixel the point is in (starting image)
@@ -128,8 +129,8 @@ public class MorphWindow extends JFrame {
                 x2 = end.getPoints()[i][j].getImgX(); // Get the y coordinate of the pixel the point is in (ending image)
                 y2 = end.getPoints()[i][j].getImgY(); // Get the y coordinate of the pixel the point is in (ending image)
                 // Compute the difference of the points depending on the number of frames rendered so far (both for x and y)
-                x = ((x2 - x1) * completed) + x1;
-                y = ((y2 - y1) * completed) + y1;
+                x = ((x2 - x1) * completedFrames) + x1;
+                y = ((y2 - y1) * completedFrames) + y1;
 
                 // Change the coordinates of x and y of the start panel
                 morph.getPoints()[i][j].setImgX(x);
@@ -137,36 +138,32 @@ public class MorphWindow extends JFrame {
             }
         }
         setTiangles();
-        // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the difference of source and destination images and applying it to the tween
-        // Pass int from setRGB into color constructor to know what to do with the integer from getRGB
+        // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
+        // difference of source and destination images and applying it to the tween. Pass int from setRGB into
+        // color constructor to know what to do with the integer from getRGB
 
         for (int i = 0; i < morph.getPicture().getWidth(); i++) {
             for (int j = 0; j < morph.getPicture().getHeight(); j++) {
-                int currPixel = morph.getPicture().getRGB(i, j);
-                int endPixel = end.getPicture().getRGB(i, j);
-
-                Color startImage = new Color(currPixel);
-                Color endImage = new Color(endPixel);
+                currColor = new Color(morph.getPicture().getRGB(i, j));
+                endColor = new Color(end.getPicture().getRGB(i, j));
                 // cross dissolve formula
-                int tweenImageR = startImage.getRed() + completed * (endImage.getRed() - startImage.getRed());
-                int tweenImageG = startImage.getGreen() + completed * (endImage.getGreen() - startImage.getGreen());
-                int tweenImageB = startImage.getBlue() + completed * (endImage.getBlue() - startImage.getBlue());
-                int tweenImageAlp = startImage.getAlpha() + completed * (endImage.getAlpha() - startImage.getAlpha());
-                Color tweenImage = new Color(tweenImageR, tweenImageG, tweenImageB, tweenImageAlp);
-                morph.getPicture().setRGB(i, j, tweenImage.getRGB());
+                tweenImageR = currColor.getRed() + completedFrames * (endColor.getRed() - currColor.getRed());
+                tweenImageG = currColor.getGreen() + completedFrames * (endColor.getGreen() - currColor.getGreen());
+                tweenImageB = currColor.getBlue() + completedFrames * (endColor.getBlue() - currColor.getBlue());
+                tweenImageAlp = currColor.getAlpha() + completedFrames * (endColor.getAlpha() - currColor.getAlpha());
+
+                tweenColor = new Color(tweenImageR, tweenImageG, tweenImageB, tweenImageAlp);
+                morph.getPicture().setRGB(i, j, tweenColor.getRGB());
             } // TODO: check why the intensities are not blending and then do the morph
         }
         currFrame++; // Increase the number of frames rendered
-        morph.ignoreGrid();
         morph.repaint(); //repaint each frame
-    }//End animation()
+    } //End animation()
 
     /* TODO:
-        - Set morphing frames
         - Make reading file in/saving final file work
         - Grid sizes required (5X5, 10X10, 20X20)
         - Adjust image brightness
-        - Constraint points in area and make them draggabble again
      */
 
 
