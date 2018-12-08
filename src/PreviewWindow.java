@@ -123,6 +123,7 @@ public class PreviewWindow extends JFrame {
                 });
             }
         });
+        FileSettings.setEnabled(false);
 
         //close the PreviewWindow JFrame
         JMenuItem FileExit = new JMenuItem("Exit");
@@ -157,7 +158,7 @@ public class PreviewWindow extends JFrame {
             }
         });
 
-        JMenuItem resetButton = new JMenuItem("Reset");
+        JMenuItem resetButton = new JMenuItem("Reset Points");
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //Reset the PreviewWindow to the original locations of the Nodes

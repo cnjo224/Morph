@@ -61,6 +61,7 @@ public class Picture extends JPanel {
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight()));
     }//End alternative constructor
 
+    //Allows the grid size to change (up to 20x20 grid of movable points)
     public void changeGridSize(int size){
         this.rows = size; // Number of rows that contain control points
         this.cols = size; // Number of columns that contain control points
@@ -88,17 +89,19 @@ public class Picture extends JPanel {
         repaint();
     }
 
+    //set a new image under the points
     public void changeImage(BufferedImage image){
         bim = image;
         repaint();
-    }
+    }//End changeImage()
 
+    //copy the image
     public BufferedImage copyImage(BufferedImage bim){
         ColorModel m = bim.getColorModel();
         boolean isAlphaPremultiplied = getColorModel().isAlphaPremultiplied();
         WritableRaster raster = bim.copyData(null);
         return new BufferedImage(m, raster, isAlphaPremultiplied, null);
-    }
+    }//End copyImage()
 
     // Function to reset the 2D array to its default values
     public void resetPicture() {
@@ -160,7 +163,7 @@ public class Picture extends JPanel {
         }
         repaint();
         return bim;
-    }
+    }//End changeVal()
 
     // Draw the connecting lines in between the control points
     public void drawLines(Graphics g) {
@@ -231,13 +234,13 @@ public class Picture extends JPanel {
     public void setActiveNode(int x, int y) {
         this.activeNode = points[x][y];
         changeNodeColor(activeNode, Color.RED);
-    }
+    }//End setActiveNode()
 
     // Gets the active node and changes it color
     public Node getActiveNode(){
         changeNodeColor(activeNode, Color.RED);
         return activeNode;
-    }
+    }//End getActiveNode()
 
     // Resets the node when it is no longer active.
     public void clearActiveNode(){
@@ -257,7 +260,7 @@ public class Picture extends JPanel {
             changeNodeColor(activeNode, Color.BLACK);
             activeNode = null;
         }
-    }
+    }//End clearActiveNode()
 
     //move the activeNode to new location (within boundary only)
     public void movePoint(int posX, int posY){

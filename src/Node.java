@@ -12,7 +12,7 @@ public class Node extends Polygon {
     private int x, y, imgX, imgY, cols, rows, PictureWidth, PictureHeight;
     private final int size = 5;
     private Color color;
-    private Polygon boundaryPoly;
+    private Polygon boundaryPoly; //This constrains where the point is able to move
 
     // Constructor: initializes the node based on its position in a 2D array and calculates its pixel position in a panel.
     public Node(int X, int Y, int Cols, int Rows, int pictureWidth, int pictureHeight){
@@ -46,18 +46,19 @@ public class Node extends Polygon {
     public void setImgX(int xLocation){
         imgX = xLocation;
         xpoints = new int[]{imgX - size, imgX + size, imgX + size, imgX - size};
-    }
+    }//End setImgX
     public void setImgY(int yLocation){
         imgY = yLocation;
         ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};
-    }
+    }//End setImgY()
 
+    //determines if the point is in the Node space
     public boolean contained(Point click) {
         if(click.x >= xpoints[0] && click.x <= xpoints[1] && click.y >= ypoints[0] && click.y <= ypoints[2]){
             return true;
         }
         return false;
-    }
+    } //End contained()
 
     // Set and get the color of the node
     public Color getColor() { return color; }
@@ -72,6 +73,7 @@ public class Node extends Polygon {
         ypoints = new int[]{imgY - size, imgY - size, imgY + size, imgY + size};
     }//End resetNode()
 
+    //return the size of the used Node array (-2) (movable size only)
     public int getSize(){return size;}
 
     public void resetBounds(int[] pointsX, int[] pointsY){
@@ -83,9 +85,10 @@ public class Node extends Polygon {
             return true;
         }
         return false;
-    }
+    }//End withinBounds()
+
 
     public Polygon getBoundaryPoly() {
         return boundaryPoly;
-    }
+    } //End getBoundaryPoly
 }//End class

@@ -45,7 +45,7 @@ public class MorphWindow extends JFrame {
         start = new Picture(startImage, startPoints, size);
         end = new Picture(endImage, endPoints,size);
 
-        morph = new Picture(startImage, startPoints, size);//, size, size);
+        morph = new Picture(startImage, startPoints, size);
         morph.ignoreGrid();
         morph.repaint();
 
@@ -95,6 +95,8 @@ public class MorphWindow extends JFrame {
                 });
             }
         });
+        FileSettings.setEnabled(false); //Disabled control
+
 
         //close the PreviewWindow JFrame
         JMenuItem FileExit = new JMenuItem("Exit");
@@ -166,7 +168,7 @@ public class MorphWindow extends JFrame {
         //BufferedImage startingTriangles = setTriangles(start, new Picture(morph.getBim(), morph.getPoints(), r-2));
         setTriangles(start, morph);//new Picture(morph.getBim(), morph.getPoints(), r-2));
         //BufferedImage endingTriangles =
-        setTriangles(end, morph);//new Picture(morph.getBim(), morph.getPoints(),r-2));
+        //setTriangles(end, morph);//new Picture(morph.getBim(), morph.getPoints(),r-2));
 
         // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
         // difference of source and destination images and applying it to the tween. Pass int from setRGB into
@@ -198,13 +200,6 @@ public class MorphWindow extends JFrame {
         morph.ignoreGrid();
         morph.repaint(); //repaint each frame
     } //End animation()
-
-    /* TODO:
-        - Make reading file in
-        - Grid sizes required (5X5, 10X10, 20X20)
-        - Adjust image brightness
-     */
-
 
     //public BufferedImage
     public void setTriangles(Picture first, Picture last) {
@@ -244,7 +239,7 @@ public class MorphWindow extends JFrame {
             }
         }
         //return last.getBim();
-    }
+    }//End setTriangles()
 
     public static void warpTriangle(
             BufferedImage src,
@@ -321,7 +316,7 @@ public class MorphWindow extends JFrame {
         g2.setTransform(af);
         g2.drawImage(src, 0, 0, null);
         g2.dispose();
-    }
+    } //End warpTriangle()
 
     private static void Gauss(int n, double[][] a, int[] l) {
         /****************************************************
@@ -363,10 +358,9 @@ public class MorphWindow extends JFrame {
                 }
             }
         }
-    }
+    } //End Gauss()
 
-    private static void solve(
-            int n, double[][] a, int[] l, double[] b, double[] x) {
+    private static void solve(int n, double[][] a, int[] l, double[] b, double[] x) {
         /*********************************************************
          a and l have previously been passed to Gauss() b is the product of
          a and x. x is the 1x3 matrix of coefficients to solve for
@@ -387,5 +381,5 @@ public class MorphWindow extends JFrame {
             }
             x[i] = sum / a[l[i]][i];
         }
-    }
+    } //End solve()
 }

@@ -39,11 +39,6 @@ public class PopupSettings extends JFrame {
                     secondsSelect.setValue(previewSeconds);
                 }
             }
-
-            @Override
-            public void windowClosed(WindowEvent windowEvent){
-                System.out.println("Window closed");
-            }
         });
 
         JLabel gridSizeLabel = new JLabel("Grid Size: ");
@@ -134,6 +129,7 @@ public class PopupSettings extends JFrame {
         setResizable(false);
     }//end constructor
 
+    //Regulate the Grid Size combo box
     private void getGridSize(String flag){
         if(flag == "value") {
             switch (gridSize.getSelectedIndex()) {
@@ -146,7 +142,7 @@ public class PopupSettings extends JFrame {
                 case 2:
                     gridSizeValue = 20;
             }//end switch
-        }else{
+        }else{ //flag == "index"
             switch (gridSizeValue){
                 case 5:
                     gridSize.setSelectedIndex(0);

@@ -34,12 +34,14 @@ public class JMorph extends JFrame {
             public void mouseClicked(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {
                 if(startView.clickInPoint(e.getPoint())){
+                    //handle point selection
                     endView.setActiveNode(startView.getActiveNode().getX(), startView.getActiveNode().getY());
                     endView.repaint();
                     isDragging = true;
                 }
             }
             public void mouseReleased(MouseEvent e) {
+                //release selected point
                 isDragging = false;
                 startView.clearActiveNode();
                 endView.clearActiveNode();
@@ -50,6 +52,7 @@ public class JMorph extends JFrame {
         startView.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
+                    //redraw the point at the new location (if eligible location within boundary)
                     if(e.getX() >=0 && e.getX() < startView.getWidth() && e.getY() >=0 && e.getY() < startView.getHeight()) {
                         startView.movePoint(e.getX(), e.getY());
                         startView.repaint();
@@ -65,12 +68,14 @@ public class JMorph extends JFrame {
             public void mouseClicked(MouseEvent e) {}
             public void mousePressed(MouseEvent e) {
                 if(endView.clickInPoint(e.getPoint())){
+                    //handle point selection
                     startView.setActiveNode(endView.getActiveNode().getX(), endView.getActiveNode().getY());
                     startView.repaint();
                     isDragging = true;
                 }
             }
             public void mouseReleased(MouseEvent e) {
+                //release selected point
                 isDragging = false;
                 endView.clearActiveNode();
                 startView.clearActiveNode();
@@ -81,6 +86,7 @@ public class JMorph extends JFrame {
         endView.addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
                 if(isDragging){
+                    //move selected point to new location (if valid within boundary)
                     if(e.getX() >=0 && e.getX() < endView.getWidth() && e.getY() >=0 && e.getY() < endView.getHeight()) {
                         endView.movePoint(e.getX(), e.getY());
                         endView.repaint();
@@ -105,6 +111,7 @@ public class JMorph extends JFrame {
     // The mediatracker in this method can throw an exception
 
     private BufferedImage readImage (String file) {
+        //use this for initial load of images
         System.out.println(file);
         Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource(file));
         MediaTracker tracker = new MediaTracker (new Component () {});
@@ -119,19 +126,24 @@ public class JMorph extends JFrame {
 
     public void createMenus(){
 
+        //set the left side image (constrained to 600x600 pixel images)
         JMenuItem FileOpenLeft = new JMenuItem("Open Left Image");
         FileOpenLeft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Open file");
+
+                //allow user to select image via widget
                 JFileChooser fc = new JFileChooser(".");
                 int returnVal = fc.showOpenDialog(JMorph.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     try {
+                        //read the image
                         BufferedImage image3 = ImageIO.read(file);
                         if(image3.getWidth() != 600 || image3.getHeight() != 600){
-                            System.out.println("Image must be of height 600 and width 600!");
+                            //Error message
+                            System.out.println("Error: Image must be of height 600 and width 600!");
                         }else{
+                            //set the valid image to the view
                             image = image3;
                             startView.changeImage(image);
                         }
@@ -140,19 +152,22 @@ public class JMorph extends JFrame {
             }
         });
 
+        //set right side image (Constrained 600x600 px images)
         JMenuItem FileOpenRight = new JMenuItem("Open Right Image");
         FileOpenRight.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Open file");
+                //allow the user to select an image for the right side via a widget
                 JFileChooser fc = new JFileChooser(".");
                 int returnVal = fc.showOpenDialog(JMorph.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     try {
+                        //read the image
                         BufferedImage image3 = ImageIO.read(file);
                         if(image3.getWidth() != 600 || image3.getHeight() != 600){
-                            System.out.println("Image must be of height 600 and width 600!");
+                            System.out.println("Error: Image must be of height 600 and width 600!");
                         }else{
+                            //set the valid image to the view
                             image2 = image3;
                             endView.changeImage(image2);
                         }
@@ -167,9 +182,8 @@ public class JMorph extends JFrame {
                 settings.setVisible(true);
                 settings.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent windowEvent) {
-                        System.out.println(settings.applyHit);
                         //call member functions of settings page here
-                        // TODO: Add change listener to brightness
+                        //apply any necessary setting changes
                         if(settings.applyHit) {
                             if(settings.getGridSizeValue() != rows){
                                 rows = settings.getGridSizeValue();
@@ -177,7 +191,6 @@ public class JMorph extends JFrame {
                                 startView.changeGridSize(rows);
                                 endView.changeGridSize(rows);
                             }
-
                             if(settings.startBright) {
                                 image = startView.changeBrightness(settings.getStartBChange());
                                 settings.startBright = false;
@@ -193,6 +206,7 @@ public class JMorph extends JFrame {
             }
         });
 
+        //close the program when item is clicked
         JMenuItem FileExit = new JMenuItem("Exit");
         FileExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -209,7 +223,7 @@ public class JMorph extends JFrame {
         JMenuItem Preview = new JMenuItem("Preview");
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Open Preview Page");
+                //initialize the preview window
                 PreviewWindow OpenPreview = new PreviewWindow(settings, image, startView.getPoints(), endView.getPoints(), rows);
             }
         });
@@ -217,17 +231,16 @@ public class JMorph extends JFrame {
         JMenuItem Morph = new JMenuItem("Morph");
         Morph.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                System.out.println("Open Morph Page");
+                //initialize the morph window
                 MorphWindow OpenMorph = new MorphWindow(settings, copyImage(image), startView.getPoints(), copyImage(image2), endView.getPoints(), rows);
             }
         });
 
-        JMenuItem Reset = new JMenuItem("Reset");
+        JMenuItem Reset = new JMenuItem("Reset Points");
         Reset.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 startView.resetPicture();
                 endView.resetPicture();
-                System.out.println("Reset Images");
             }
         });
 
@@ -239,6 +252,7 @@ public class JMorph extends JFrame {
         menuBar.add(Reset);
     }//end createMenus function
 
+    //make a copy of the image
     public BufferedImage copyImage(BufferedImage init) {
         ColorModel m = init.getColorModel();
         boolean isAlphaPremultiplied = getColorModel().isAlphaPremultiplied();
