@@ -18,14 +18,14 @@ public class MorphWindow extends JFrame {
     private Timer animate;
     private JMenuItem status; //because it's needed inside an event listener
 
-    public MorphWindow(PopupSettings settings, BufferedImage startImage, Node[][] initPoints, BufferedImage endImage, Node[][] finPoints) {
+    public MorphWindow(PopupSettings settings, BufferedImage startImage, Node[][] initPoints, BufferedImage endImage, Node[][] finPoints, int size) {
         super("Morph");
-        r = initPoints.length;
-        c = initPoints[0].length;
-
+        r = size+2;
+        c = size+2;
+        System.out.println("Size = " + size);
         // Initialize a new array to store a copy of the original array.
-        Node[][] startPoints = new Node[c][r];
-        Node[][] endPoints = new Node[c][r];
+        Node[][] startPoints = new Node[22][22];
+        Node[][] endPoints = new Node[22][22];
 
         // Populate the copy of the array with new Node objects native to the PreviewWindow class only
         for (int i = 0; i < c; i++) {
@@ -42,10 +42,10 @@ public class MorphWindow extends JFrame {
             }
         }
 
-        start = new Picture(startImage, startPoints);
-        end = new Picture(endImage, endPoints);
+        start = new Picture(startImage, startPoints, size);
+        end = new Picture(endImage, endPoints, size);
 
-        morph = new Picture(startImage, startPoints);
+        morph = new Picture(startImage, startPoints, size);//, size, size);
         morph.ignoreGrid();
         morph.repaint();
 
@@ -55,7 +55,7 @@ public class MorphWindow extends JFrame {
         animate = new Timer(seconds * 10, new ActionListener() { // Timer to allow the animation to be visible
             public void actionPerformed(ActionEvent e) {
                 animation();
-                if (currFrame > seconds * framesPerSecond) { // If we are creating more frames than we need, the animation must stop.
+                if (currFrame > (seconds * framesPerSecond)) { // If we are creating more frames than we need, the animation must stop.
                     animate.stop();
                     currFrame = 1; // Reset the number of frames for future use
                     status.setText("Status: Finished");
@@ -162,10 +162,10 @@ public class MorphWindow extends JFrame {
                 morph.getPoints()[i][j].setImgY((int) y);
             }
         }
-        Picture morphCopy1 = new Picture(morph.getBim(), morph.getPoints());
-        Picture morphCopy2 = new Picture(morph.getBim(), morph.getPoints());
-        BufferedImage startingTriangles = setTiangles(start, morphCopy1);
-        BufferedImage endingTriangles = setTiangles(end, morphCopy2);
+
+        BufferedImage startingTriangles = setTriangles(start, new Picture(morph.getBim(), morph.getPoints(), r));
+        BufferedImage endingTriangles = setTriangles(end, new Picture(morph.getBim(), morph.getPoints(), r));
+
         // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
         // difference of source and destination images and applying it to the tween. Pass int from setRGB into
         // color constructor to know what to do with the integer from getRGB
@@ -192,35 +192,25 @@ public class MorphWindow extends JFrame {
         } catch (IOException e) {
             System.out.println("Error Saving Morph Frame");
         }
-
         currFrame++; // Increase the number of frames rendered
         morph.ignoreGrid();
         morph.repaint(); //repaint each frame
     } //End animation()
 
     /* TODO:
-        - Make reading file in/saving final file work
+        - Make reading file in
         - Grid sizes required (5X5, 10X10, 20X20)
         - Adjust image brightness
      */
 
 
-    public BufferedImage setTiangles(Picture first, Picture last) {
+    public BufferedImage setTriangles(Picture first, Picture last) {
         double sx1, sx2, sx3, sx4, dx1, dx2, dx3, dx4;
         double sy1, sy2, sy3, sy4, dy1, dy2, dy3, dy4;
         for (int i = 0; i < c - 1; i++) {
             for (int j = 0; j < r - 1; j++) {
                 if (i + 1 <= c || j + 1 <= r) {
                     // Source triangle (S) points
-                    /*sx1 = morph.getPoint(i, j).getX();
-                    sy1 = morph.getPoint(i, j).getY();
-                    sx2 = morph.getPoint(i + 1, j).getX();
-
-                    sy2 = morph.getPoint(i + 1, j).getY();
-                    sx3 = morph.getPoint(i, j + 1).getX();
-                    sy3 = morph.getPoint(i, j + 1).getY();
-                    sx4 = morph.getPoint(i + 1, j + 1).getX();
-                    sy4 = morph.getPoint(i + 1, j + 1).getY();*/
                     sx1 = first.getPoint(i, j).getImgX();
                     sy1 = first.getPoint(i, j).getImgY();
                     sx2 = first.getPoint(i + 1, j).getImgX();
@@ -231,14 +221,6 @@ public class MorphWindow extends JFrame {
                     sy4 = first.getPoint(i, j + 1).getImgY();
 
                     // Destination triangle (D) points
-                    /*dx1 = end.getPoint(i, j).getX();
-                    dy1 = end.getPoint(i, j).getY();
-                    dx2 = end.getPoint(i + 1, j).getX();
-                    dy2 = end.getPoint(i + 1, j).getY();
-                    dx3 = end.getPoint(i, j + 1).getX();
-                    dy3 = end.getPoint(i, j + 1).getY();
-                    dx4 = end.getPoint(i + 1, j + 1).getX();
-                    dy4 = end.getPoint(i + 1, j + 1).getY();*/
                     dx1 = last.getPoint(i, j).getImgX();
                     dy1 = last.getPoint(i, j).getImgY();
                     dx2 = last.getPoint(i + 1, j).getImgY();

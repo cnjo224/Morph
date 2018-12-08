@@ -170,6 +170,12 @@ public class JMorph extends JFrame {
         });
 
         JMenu FileMenu = new JMenu("File");
+        FileMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
         FileMenu.add(FileOpen);
         FileMenu.add(FileSettings);
         FileMenu.add(FileExit);
@@ -178,7 +184,7 @@ public class JMorph extends JFrame {
         Preview.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Preview Page");
-                PreviewWindow OpenPreview = new PreviewWindow(settings, image, startView.getPoints(), endView.getPoints());
+                PreviewWindow OpenPreview = new PreviewWindow(settings, image, startView.getPoints(), endView.getPoints(), rows);
             }
         });
 
@@ -186,7 +192,7 @@ public class JMorph extends JFrame {
         Morph.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open Morph Page");
-                MorphWindow OpenMorph = new MorphWindow(settings, copyImage(image), startView.getPoints(), copyImage(image2), endView.getPoints());
+                MorphWindow OpenMorph = new MorphWindow(settings, copyImage(image), startView.getPoints(), copyImage(image2), endView.getPoints(), rows);
             }
         });
 

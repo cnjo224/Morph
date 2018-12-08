@@ -14,31 +14,33 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
 public class PreviewWindow extends JFrame {
-    private int seconds, framesPerSecond, currFrame = 1;
+    private int seconds, framesPerSecond, currFrame = 1, r, c;
     private Picture start;
     private Node[][] startP, originalP, end;
     private Timer anim;
-    private Container c = getContentPane();
+    private Container C = getContentPane();
     private JMenuItem status; //because it's needed inside an event listener
 
     /* Default constructor of the preview window, gets a panel with an image and shows the linear transformation of
      the points from the starting to the ending image*/
-    public PreviewWindow(PopupSettings settings, BufferedImage bim, Node[][] Start, Node[][] End){
+    public PreviewWindow(PopupSettings settings, BufferedImage bim, Node[][] Start, Node[][] End, int size){
         super("Preview");
         originalP = Start; // Store the 2D array of control points that was originally passed in for easy resetting.
-        startP = new Node[Start.length][Start.length]; // Initialize a new array to store a copy of the original array.
-
+        startP = new Node[22][22]; // Initialize a new array to store a copy of the original array.
+        r = size;
+        c = size;
         // Populate the copy of the array with new Node objects native to the PreviewWindow class only
-        for(int i = 0; i < Start.length; i++){
-            for(int j = 0; j < Start.length; j++){
-                Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), Start.length, Start.length, bim.getWidth(), bim.getHeight());
+        for(int i = 0; i < c; i++){
+            for(int j = 0; j < r; j++){
+                Node nd = new Node(Start[i][j].getX(), Start[i][j].getY(), c, r, bim.getWidth(), bim.getHeight());
                 nd.setImgX(Start[i][j].getImgX());
                 nd.setImgY(Start[i][j].getImgY());
                 startP[i][j] = nd;
             }
         }
 
-        start = new Picture(bim, startP); // Create a new panel of Picture class.
+        start = new Picture(bim, startP, size); // Create a new panel of Picture class.
+        start.repaint();
         end = End;
 
         addMenus(settings);
@@ -56,8 +58,8 @@ public class PreviewWindow extends JFrame {
         });
 
         //add the Picture panel to the JFrame
-        c.add(start);
-        setSize(650,700);
+        C.add(start);
+        setSize(bim.getWidth(),bim.getHeight());
         setVisible(true);
     }// end Constructor
 
@@ -65,8 +67,8 @@ public class PreviewWindow extends JFrame {
     // the starting image to the position on the ending image.
     public void animation() {
         int x, y, x1, x2, y1, y2;
-        for (int i = 0; i < end.length; i++) {
-            for (int j = 0; j < end[i].length; j++) {
+        for (int i = 0; i < c; i++) {
+            for (int j = 0; j < r; j++) {
                 x1 = start.getPoints()[i][j].getImgX(); // Get the x coordinate of the pixel the point is in (starting image)
                 y1 = start.getPoints()[i][j].getImgY(); // Get the y coordinate of the pixel the point is in (starting image)
                 x2 = end[i][j].getImgX(); // Get the y coordinate of the pixel the point is in (ending image)
@@ -86,8 +88,8 @@ public class PreviewWindow extends JFrame {
 
     // Reset the preview values to the original position of the preview
     public void resetPreview() {
-        for(int i = 0; i < originalP.length; i++) {
-            for (int j = 0; j < originalP.length; j++) {
+        for(int i = 0; i < c; i++) {
+            for (int j = 0; j < r; j++) {
                 startP[i][j].setImgX(originalP[i][j].getImgX());
                 startP[i][j].setImgY(originalP[i][j].getImgY());
             }

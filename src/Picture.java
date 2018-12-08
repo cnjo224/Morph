@@ -26,7 +26,7 @@ public class Picture extends JPanel {
         this.cols = cols; // Number of columns that contain control points
         trueRow = rows+2; // Add 2 rows to create a grid with the right number of control points
         trueCol = cols+2; // Add 2 columns to create a grid with the right number of control points
-        points = new Node[20][20]; // 2D array of control points
+        points = new Node[22][22]; // 2D array of control points
         drawNodes = true;
         setPreferredSize(new Dimension(bim.getWidth(), bim.getHeight())); // Size of the panel
         // Initialize the 2D array of control points
@@ -50,10 +50,10 @@ public class Picture extends JPanel {
     }//End default constructor
 
     // Constructor for the Picture class, takes in a 2D array of control points to modify it
-    public Picture(BufferedImage bim, Node[][] tempPoints){
+    public Picture(BufferedImage bim, Node[][] tempPoints, int size){
         this.bim = copyImage(bim);
-        rows = tempPoints.length-2; // Retrieve the number of rows from the passed 2D array
-        cols = tempPoints.length-2; // Retrieve the number of columns from the passed 2D array
+        rows = size; // Retrieve the number of rows from the passed 2D array
+        cols = size; // Retrieve the number of columns from the passed 2D array
         trueRow = rows+2; // Reset the number of true rows and columns (based on the desired number of control points)
         trueCol = cols+2;
         points = tempPoints; // Reset the control point array
@@ -161,8 +161,8 @@ public class Picture extends JPanel {
     public void drawLines(Graphics g) {
         int x, y, xR, yR, xD, yD, xDiag, yDiag;
 
-        for (int i = 0; i < trueCol; i++) {
-            for (int j = 0; j < trueRow; j++) {
+        for (int i = 0; i < trueCol-1; i++) {
+            for (int j = 0; j < trueRow-1; j++) {
                 x = points[i][j].getImgX()+2;
                 y = points[i][j].getImgY()+2;
 
