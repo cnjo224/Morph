@@ -14,7 +14,7 @@ import java.awt.event.*;
 public class PopupSettings extends JFrame {
     private int tweenImagesDefault = 30, previewSecondsDefault = 2;
     private int gridSizeValue=10, tweenImageValue=30, previewSeconds = 2, startBChange = 50, endBchange = 50;
-    public boolean applyHit = false;
+    public boolean applyHit = false, startBright = false, endBright = false;
 
     //These must be global to ensure access within event listeners
     private JSpinner tweenImages, secondsSelect;
@@ -77,6 +77,7 @@ public class PopupSettings extends JFrame {
             @Override
             public void stateChanged(ChangeEvent changeEvent) {
                 startBChange = startBrightness.getValue();
+                startBright = true;
             }
         });
 
@@ -91,6 +92,7 @@ public class PopupSettings extends JFrame {
             @Override
             public void stateChanged(ChangeEvent changeEvent) {
                 endBchange = endBrightness.getValue();
+                endBright = true;
             }
         });
 

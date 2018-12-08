@@ -88,6 +88,11 @@ public class Picture extends JPanel {
         repaint();
     }
 
+    public void changeImage(BufferedImage image){
+        bim = image;
+        repaint();
+    }
+
     public BufferedImage copyImage(BufferedImage bim){
         ColorModel m = bim.getColorModel();
         boolean isAlphaPremultiplied = getColorModel().isAlphaPremultiplied();

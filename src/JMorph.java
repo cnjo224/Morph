@@ -27,7 +27,7 @@ public class JMorph extends JFrame {
     //initializer for the JFrame
     public JMorph(){
         super("Morph");
-        this.createMenus();
+
 
         startView = new Picture(image, rows, columns);
         startView.addMouseListener(new MouseListener() {
@@ -93,8 +93,8 @@ public class JMorph extends JFrame {
         c.add(startView, BorderLayout.WEST);
         c.add(endView, BorderLayout.EAST);
 
+        this.createMenus();
         setSize(startView.getBim().getWidth()+endView.getBim().getWidth()+30,startView.getBim().getHeight()+70);
-        //setResizable(false);
         setVisible(true);
     }
 
@@ -105,15 +105,13 @@ public class JMorph extends JFrame {
     // The mediatracker in this method can throw an exception
 
     private BufferedImage readImage (String file) {
+        System.out.println(file);
         Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource(file));
         MediaTracker tracker = new MediaTracker (new Component () {});
         tracker.addImage(image, 0);
         try { tracker.waitForID (0); }
         catch (InterruptedException e) {}
-        BufferedImage bim = new BufferedImage
-
-                (image.getWidth(this), image.getHeight(this),
-                        BufferedImage.TYPE_INT_RGB);
+        BufferedImage bim = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_RGB);
         Graphics2D big = bim.createGraphics();
         big.drawImage (image, 0, 0, this);
         return bim;
@@ -121,8 +119,8 @@ public class JMorph extends JFrame {
 
     public void createMenus(){
 
-        JMenuItem FileOpen = new JMenuItem("Open");
-        FileOpen.addActionListener(new ActionListener() {
+        JMenuItem FileOpenLeft = new JMenuItem("Open Left Image");
+        FileOpenLeft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 System.out.println("Open file");
                 JFileChooser fc = new JFileChooser(".");
@@ -130,8 +128,35 @@ public class JMorph extends JFrame {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fc.getSelectedFile();
                     try {
-                        image = ImageIO.read(file);
-                    } catch (IOException e1) {}
+                        BufferedImage image3 = ImageIO.read(file);
+                        if(image3.getWidth() != 600 || image3.getHeight() != 600){
+                            System.out.println("Image must be of height 600 and width 600!");
+                        }else{
+                            image = image3;
+                            startView.changeImage(image);
+                        }
+                    } catch (IOException e1) {System.out.println(e1.getMessage());}
+                }
+            }
+        });
+
+        JMenuItem FileOpenRight = new JMenuItem("Open Right Image");
+        FileOpenRight.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Open file");
+                JFileChooser fc = new JFileChooser(".");
+                int returnVal = fc.showOpenDialog(JMorph.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    try {
+                        BufferedImage image3 = ImageIO.read(file);
+                        if(image3.getWidth() != 600 || image3.getHeight() != 600){
+                            System.out.println("Image must be of height 600 and width 600!");
+                        }else{
+                            image2 = image3;
+                            endView.changeImage(image2);
+                        }
+                    } catch (IOException e1) {System.out.println(e1.getMessage());}
                 }
             }
         });
@@ -153,8 +178,14 @@ public class JMorph extends JFrame {
                                 endView.changeGridSize(rows);
                             }
 
-                            image = startView.changeBrightness(settings.getStartBChange());
-                            image2 = endView.changeBrightness(settings.getEndBchange());
+                            if(settings.startBright) {
+                                image = startView.changeBrightness(settings.getStartBChange());
+                                settings.startBright = false;
+                            }
+                            if(settings.endBright) {
+                                image2 = endView.changeBrightness(settings.getEndBchange());
+                                settings.endBright = false;
+                            }
                         }
                         settings.applyHit = false;
                     }
@@ -170,13 +201,8 @@ public class JMorph extends JFrame {
         });
 
         JMenu FileMenu = new JMenu("File");
-        FileMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        FileMenu.add(FileOpen);
+        FileMenu.add(FileOpenLeft);
+        FileMenu.add(FileOpenRight);
         FileMenu.add(FileSettings);
         FileMenu.add(FileExit);
 
