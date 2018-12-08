@@ -27,8 +27,8 @@ public class PreviewWindow extends JFrame {
         super("Preview");
         originalP = Start; // Store the 2D array of control points that was originally passed in for easy resetting.
         startP = new Node[22][22]; // Initialize a new array to store a copy of the original array.
-        r = size;
-        c = size;
+        r = size+2;
+        c = size+2;
         // Populate the copy of the array with new Node objects native to the PreviewWindow class only
         for(int i = 0; i < c; i++){
             for(int j = 0; j < r; j++){

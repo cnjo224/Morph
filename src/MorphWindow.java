@@ -43,7 +43,7 @@ public class MorphWindow extends JFrame {
         }
 
         start = new Picture(startImage, startPoints, size);
-        end = new Picture(endImage, endPoints, size);
+        end = new Picture(endImage, endPoints,size);
 
         morph = new Picture(startImage, startPoints, size);//, size, size);
         morph.ignoreGrid();
@@ -163,17 +163,19 @@ public class MorphWindow extends JFrame {
             }
         }
 
-        BufferedImage startingTriangles = setTriangles(start, new Picture(morph.getBim(), morph.getPoints(), r));
-        BufferedImage endingTriangles = setTriangles(end, new Picture(morph.getBim(), morph.getPoints(), r));
+        //BufferedImage startingTriangles = setTriangles(start, new Picture(morph.getBim(), morph.getPoints(), r-2));
+        setTriangles(start, morph);//new Picture(morph.getBim(), morph.getPoints(), r-2));
+        //BufferedImage endingTriangles =
+        setTriangles(end, morph);//new Picture(morph.getBim(), morph.getPoints(),r-2));
 
         // setRGB method: takes in x an y values to access the pixels, make sure to touch all pixels, taking the
         // difference of source and destination images and applying it to the tween. Pass int from setRGB into
         // color constructor to know what to do with the integer from getRGB
         BufferedImage frame = new BufferedImage(morph.getBim().getWidth(), morph.getBim().getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < startingTriangles.getWidth(); i++) {
-            for (int j = 0; j < startingTriangles.getHeight(); j++) {
-                currColor = new Color(startingTriangles.getRGB(i, j));
-                endColor = new Color(endingTriangles.getRGB(i, j));
+        for (int i = 0; i < morph.getBim().getWidth(); i++){//startingTriangles.getWidth(); i++) {
+            for (int j = 0; j < morph.getBim().getHeight(); j++) {//startingTriangles.getHeight(); j++) {
+                currColor = new Color(morph.getBim().getRGB(i, j));//startingTriangles.getRGB(i, j));
+                endColor = new Color(end.getBim().getRGB(i,j));//endingTriangles.getRGB(i, j));
                 // cross dissolve formula
                 tweenImageR = (int) (currColor.getRed() + completedFrames * (endColor.getRed() - currColor.getRed()));
                 tweenImageG = (int) (currColor.getGreen() + completedFrames * (endColor.getGreen() - currColor.getGreen()));
@@ -204,7 +206,8 @@ public class MorphWindow extends JFrame {
      */
 
 
-    public BufferedImage setTriangles(Picture first, Picture last) {
+    //public BufferedImage
+    public void setTriangles(Picture first, Picture last) {
         double sx1, sx2, sx3, sx4, dx1, dx2, dx3, dx4;
         double sy1, sy2, sy3, sy4, dy1, dy2, dy3, dy4;
         for (int i = 0; i < c - 1; i++) {
@@ -240,7 +243,7 @@ public class MorphWindow extends JFrame {
                 }
             }
         }
-        return last.getBim();
+        //return last.getBim();
     }
 
     public static void warpTriangle(
